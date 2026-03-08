@@ -72,6 +72,7 @@ urlpatterns = [
     path("countries/", countries_grid, name="countries_grid"),
 
     path("api-auth/", include("rest_framework.urls")),
+    path('admin-panel/', include('admin_panel.urls')),
 ]
 
 if settings.DEBUG:

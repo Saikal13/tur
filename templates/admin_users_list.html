@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи - Админ-панель</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .sidebar a.active {
+            background: #f5f7fa;
+            border-left: 4px solid #3498db;
+            color: #3498db;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        input,
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f5f7fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge.admin {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .badge.active {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>Пользователи</h1>
+</div>
+
+<div class="sidebar">
+    <a href="{% url 'admin_dashboard' %}">📊 Панель</a>
+    <a href="{% url 'bookings_list' %}">📋 Заявки</a>
+    <a href="{% url 'users_list' %}" class="active">👥 Пользователи</a>
+    <a href="{% url 'tours_list' %}">✈️ Туры</a>
+</div>
+
+<div class="main">
+    <div class="filters">
+        <form method="get" style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <input type="text" name="search" placeholder="Поиск..." value="{{ search }}">
+
+            <select name="type">
+                <option value="">Все пользователи</option>
+                <option value="staff" {% if user_type == 'staff' %}selected{% endif %}>Администраторы</option>
+                <option value="active" {% if user_type == 'active' %}selected{% endif %}>Активные</option>
+                <option value="inactive" {% if user_type == 'inactive' %}selected{% endif %}>Неактивные</option>
+            </select>
+
+            <button type="submit">🔍 Найти</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Имя</th>
+                    <th>Тип</th>
+                    <th>Статус</th>
+                    <th>Зарегистрирован</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.first_name|default:"—" }}</td>
+                    <td>
+                        {% if user.is_staff %}
+                        <span class="badge admin">👑 Админ</span>
+                        {% else %}
+                        <span>Пользователь</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                        <span class="badge active">✅ Активен</span>
+                        {% else %}
+                        <span class="badge inactive">❌ Неактивен</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.date_joined|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

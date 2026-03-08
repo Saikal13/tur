@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка #{{ booking.id }} - Админ-панель</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 { font-size: 24px; }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .navbar a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a.active {
+            background: #f5f7fa;
+            border-left-color: #3498db;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .status.new { background: #ffe5e5; color: #e74c3c; }
+        .status.in-progress { background: #fff3cd; color: #f39c12; }
+        .status.confirmed { background: #d4edda; color: #27ae60; }
+        .status.cancelled { background: #f8d7da; color: #721c24; }
+        .status.done { background: #d4edda; color: #27ae60; }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .comment {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .comment-text {
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .logs {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-author {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .log-action {
+            color: #666;
+        }
+
+        .log-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .full-width {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; top: 0; }
+            .main { margin-left: 0; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>← <a href="{% url 'bookings_list' %}" style="color: white;">Заявка #{{ booking.id }}</a></h1>
+    <div>
+        <a href="{% url 'bookings_list' %}">↩️ Назад</a>
+    </div>
+</div>
+
+<div class="sidebar">
+    <a href="{% url 'admin_dashboard' %}">📊 Панель</a>
+    <a href="{% url 'bookings_list' %}" class="active">📋 Заявки</a>
+    <a href="{% url 'users_list' %}">👥 Пользователи</a>
+    <a href="{% url 'tours_list' %}">✈️ Туры</a>
+    <a href="{% url 'admin_stats' %}">📈 Статистика</a>
+</div>
+
+<div class="main">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="success">✅ {{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="grid">
+        <!-- Информация о заявке -->
+        <div class="card">
+            <h2>📋 Информация</h2>
+
+            <div class="status-badge status {{ booking.status }}">
+                {{ booking.get_status_display }}
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">ID:</span>
+                <span class="info-value">#{{ booking.id }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Имя:</span>
+                <span class="info-value">{{ booking.name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Телефон:</span>
+                <span class="info-value">
+                    <a href="tel:{{ booking.phone }}">{{ booking.phone }}</a>
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">
+                    <a href="mailto:{{ booking.email }}">{{ booking.email }}</a>
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Тур:</span>
+                <span class="info-value">{{ booking.tour.title }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Цена:</span>
+                <span class="info-value">{{ booking.tour.price }} EUR</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Дата заявки:</span>
+                <span class="info-value">{{ booking.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+
+            {% if booking.comment %}
+            <div class="info-row">
+                <span class="info-label">Комментарий клиента:</span>
+                <span class="info-value">{{ booking.comment }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Управление -->
+        <div class="card">
+            <h2>⚙️ Управление</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>📌 Изменить статус:</label>
+                    <select name="status">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if booking.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" style="width: 100%;">💾 Сохранить статус</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Комментарии и История -->
+    <div class="grid">
+        <div class="card">
+            <h2>💬 Комментарии администратора ({{ comments.count }})</h2>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name="comment" placeholder="Добавить комментарий..."></textarea>
+                </div>
+                <button type="submit" style="width: 100%;">➕ Добавить</button>
+            </form>
+
+            <div class="comments-list">
+                {% if comments %}
+                    {% for comment in comments %}
+                    <div class="comment">
+                        <div class="comment-author">
+                            👤 {{ comment.admin.username }}
+                            <span class="log-time">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                        </div>
+                        <div class="comment-text">
+                            {{ comment.comment }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #999; text-align: center; padding: 20px;">
+                        Нет комментариев
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📜 История действий ({{ logs.count }})</h2>
+
+            <div class="logs">
+                {% if logs %}
+                    {% for log in logs %}
+                    <div class="log-item">
+                        <div class="log-author">👤 {{ log.admin.username }}</div>
+                        <div class="log-action">{{ log.get_action_display }}</div>
+                        {% if log.old_value or log.new_value %}
+                            <div style="color: #999; font-size: 12px;">
+                                {{ log.old_value }} → {{ log.new_value }}
+                            </div>
+                        {% endif %}
+                        <div class="log-time">{{ log.created_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #999; text-align: center; padding: 20px;">
+                        История пуста
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

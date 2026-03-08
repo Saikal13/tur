@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'reviews',
     'core',
     "flights",
+    'admin_panel',
 ]
 
 MIDDLEWARE = [
