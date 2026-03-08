@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .tour-details {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 30px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+        }
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #004085;
+        }
+        .confirmation-badge {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #155724;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 30px 0;
+        }
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+            .tour-details {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- ЗАГОЛОВОК -->
+    <div class="header">
+        <h1>✅ Тур подтвержден!</h1>
+        <p>Ваша заявка одобрена</p>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="content">
+        <!-- ПРИВЕТСТВИЕ -->
+        <div class="greeting">
+            Привет, <span class="highlight">{{ client_name }}</span>! 👋
+        </div>
+
+        <p>Спасибо за доверие! Мы рады сообщить, что ваша заявка на тур <span class="highlight">{{ tour_title }}</span> успешно подтверждена!</p>
+
+        <!-- СТАТУС ПОДТВЕРЖДЕНИЯ -->
+        <div class="confirmation-badge">
+            🎉 Ваш тур официально подтвержден!
+        </div>
+
+        <!-- ДЕТАЛИ ТУРА -->
+        <div class="tour-details">
+            <div style="margin-bottom: 15px; font-weight: bold; color: #333;">📋 Детали тура:</div>
+
+            <div class="detail-row">
+                <span class="detail-label">🌍 Страна назначения:</span>
+                <span class="detail-value">{{ country }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">✈️ Тур:</span>
+                <span class="detail-value">{{ tour_title }}</span>
+            </div>
+
+            {% if departure_date %}
+            <div class="detail-row">
+                <span class="detail-label">📅 Дата вылета:</span>
+                <span class="detail-value">{{ departure_date }}</span>
+            </div>
+            {% endif %}
+
+            {% if departure_time %}
+            <div class="detail-row">
+                <span class="detail-label">🕐 Время вылета:</span>
+                <span class="detail-value">{{ departure_time }}</span>
+            </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <span class="detail-label">💰 Стоимость:</span>
+                <span class="detail-value">{{ price }} {{ currency }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">📞 Ваш контакт:</span>
+                <span class="detail-value">{{ phone }}</span>
+            </div>
+        </div>
+
+        <!-- ИНФОРМАЦИОННЫЙ БЛОК -->
+        <div class="info-box">
+            <strong>ℹ️ Важно!</strong><br>
+            Пожалуйста, сохраните эту информацию. Вам понадобятся эти данные для прохождения регистрации в аэропорту.
+            За 2-3 часа до вылета прибудьте в аэропорт с паспортом и билетом.
+        </div>
+
+        <!-- СЛЕДУЮЩИЕ ШАГИ -->
+        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 14px; color: #856404;">
+            <strong>📌 Следующие шаги:</strong><br>
+            1. Сделайте снимки или распечатайте это письмо<br>
+            2. Подготовьте паспорт и необходимые документы<br>
+            3. Приходите в аэропорт за 3 часа до вылета<br>
+            4. Зарегистрируйтесь в системе регистрации
+        </div>
+
+        <!-- ВОПРОСЫ -->
+        <div class="divider"></div>
+
+        <p style="font-size: 14px; color: #666;">
+            <strong>Остались вопросы?</strong><br>
+            Не стесняйтесь связаться с нами:<br>
+            📧 Email: <a href="mailto:info@touristplatform.com">info@touristplatform.com</a><br>
+            📞 Телефон: +7 (999) 123-45-67
+        </p>
+
+        <!-- КНОПКА -->
+        <div style="text-align: center;">
+            <a href="http://127.0.0.1:8000/client/messages/" class="button">
+                📱 Мои сообщения в личном кабинете
+            </a>
+        </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <div class="footer">
+        <p style="margin: 0;">
+            © 2026 Tourist Platform. Все права защищены.<br>
+            Это автоматическое письмо. Пожалуйста, не отвечайте на него.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

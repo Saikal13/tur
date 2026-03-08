@@ -58,6 +58,7 @@ urlpatterns = [
     path("api/trips/", include("trips.urls")),
     path("api/reviews/", include("reviews.urls")),
     path("api/bookings/", include("bookings.urls")),
+    path('', include('notifications.urls')),
 
     # HTML / UI
     # path("bookings/", bookings_page, name="bookings_page"),

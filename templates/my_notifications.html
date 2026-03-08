@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои уведомления о турах</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .notifications-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .notification-item {
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4f8 100%);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .notification-item:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .notification-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .notification-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-notifications-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .back-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 600px) {
+            .notification-details {
+                grid-template-columns: 1fr;
+            }
+
+            .notification-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎫 Мои уведомления о турах</h1>
+        <p>Подтвержденные туры и уведомления о вылетах</p>
+    </div>
+
+    <div class="notifications-container">
+        {% if notifications %}
+            <div style="margin-bottom: 20px; padding: 15px; background: #e8f4f8; border-radius: 6px; border-left: 4px solid #17a2b8;">
+                <strong>ℹ️ У вас {{ total_count }} подтвержденных тур(ов)</strong>
+            </div>
+
+            {% for notification in notifications %}
+            <div class="notification-item">
+                <div class="notification-header">
+                    <div>
+                        <div class="notification-title">
+                            🌍 {{ notification.country }}
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin-top: 3px;">
+                            {{ notification.booking.tour.title }}
+                        </div>
+                    </div>
+                    <div class="notification-date">
+                        📅 {{ notification.created_at|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+
+                <div class="notification-details">
+                    <div class="detail">
+                        <span class="detail-label">📅 Вылет:</span>
+                        <span class="detail-value">{{ notification.departure_date|date:"d.m.Y" }}</span>
+                    </div>
+
+                    <div class="detail">
+                        <span class="detail-label">🕐 Время:</span>
+                        <span class="detail-value">{{ notification.departure_time|time:"H:i" }}</span>
+                    </div>
+
+                    <div class="detail">
+                        <span class="detail-label">👤 Пассажир:</span>
+                        <span class="detail-value">{{ notification.booking.name }}</span>
+                    </div>
+
+                    <div class="detail">
+                        <span class="detail-label">💰 Стоимость:</span>
+                        <span class="detail-value">{{ notification.booking.price }} {{ notification.booking.currency }}</span>
+                    </div>
+                </div>
+
+                {% if notification.departure_airport %}
+                <div class="detail" style="margin-bottom: 10px;">
+                    <span class="detail-label">✈️ Аэропорт вылета:</span>
+                    <span class="detail-value">{{ notification.departure_airport }}</span>
+                </div>
+                {% endif %}
+
+                {% if notification.flight_number %}
+                <div class="detail">
+                    <span class="detail-label">🎫 Номер рейса:</span>
+                    <span class="detail-value">{{ notification.flight_number }}</span>
+                </div>
+                {% endif %}
+
+                <div class="notification-actions">
+                    <a href="/notifications/{{ notification.id }}/" class="btn btn-primary">
+                        📄 Подробнее
+                    </a>
+                    <a href="/client/booking/{{ notification.booking.id }}/" class="btn btn-secondary">
+                        📋 Заявка
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="no-notifications">
+            <div class="no-notifications-icon">📭</div>
+            <h2>Нет подтвержденных туров</h2>
+            <p>У вас пока нет подтвержденных заявок на туры. Как только вы получите подтверждение, здесь появятся уведомления о вылетах.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="back-link">
+        <a href="/">← На главную</a>
+    </div>
+</div>
+
+</body>
+</html>

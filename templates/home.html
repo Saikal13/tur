@@ -101,6 +101,7 @@
       gap:8px;
       transition:.15s ease;
       user-select:none;
+      position: relative;
     }
     .btn:active{transform:translateY(1px)}
     .btn-ghost{
@@ -117,6 +118,29 @@
       background: transparent;
       color:#fff;
       border:2px solid rgba(255,255,255,.55);
+    }
+
+    /* ✅ BADGE ДЛЯ УВЕДОМЛЕНИЙ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e74c3c;
+      color: white;
+      border-radius: 12px;
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+      font-weight: bold;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
 
     /* HERO */
@@ -554,14 +578,26 @@
           <a href="#home">Главная</a>
           <a href="#about">О туре</a>
           <a href="#itinerary">Маршрут</a>
-          <a href="#prices">Цены</a>
           <a href="#contact">Контакты</a>
         </nav>
 
         <div class="cta">
           {% if user.is_authenticated %}
             <span style="font-weight: 700; margin-right: 5px;">{{ user.username }}</span>
-            <a class="btn btn-ghost" href="/client/messages/" title="Мои сообщения">💬 СМС</a>
+
+            <!-- ✅ ИКОНКА УВЕДОМЛЕНИЙ -->
+            <a class="btn btn-ghost" href="/notifications/" title="Мои уведомления о турах">
+              🎫
+              {% if unread_count > 0 %}
+              <span class="badge">{{ unread_count }}</span>
+              {% endif %}
+            </a>
+
+            <!-- ✅ ИКОНКА СМС -->
+            <a class="btn btn-ghost" href="/client/messages/" title="Мои сообщения">
+              💬 СМС
+            </a>
+
             <a class="btn btn-ghost" href="/logout/">Выйти</a>
           {% else %}
             <a class="btn btn-ghost" href="/register/">Регистрация</a>

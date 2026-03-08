@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "flights",
     'admin_panel',
     'client_panel',
+    'notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tourist_platform.wsgi.application'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@touristplatform.com'
 
 
 # Database

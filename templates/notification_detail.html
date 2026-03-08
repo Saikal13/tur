@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уведомление о туре</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box p {
+            color: #155724;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: #004085;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #004085;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .info-box li {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 30px 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .back-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>✈️ {{ notification.country }}</h1>
+        <p>{{ notification.booking.tour.title }}</p>
+        <div style="margin-top: 15px;">
+            <span class="status-badge">✅ Тур подтвержден</span>
+        </div>
+    </div>
+
+    <!-- ДЕТАЛИ ВЫЛЕТА -->
+    <div class="card">
+        <h2>📋 Детали вылета</h2>
+
+        <div class="highlight-box">
+            <h3>🎉 Ваш тур официально подтвержден!</h3>
+            <p>Спасибо за доверие! Ниже приведены все необходимые детали для вашего путешествия.</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">📅 Дата вылета</span>
+                <span class="info-value">{{ notification.departure_date|date:"d MMMM Y" }}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">🕐 Время вылета</span>
+                <span class="info-value">{{ notification.departure_time|time:"H:i" }}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">👤 Пассажир</span>
+                <span class="info-value">{{ notification.booking.name }}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">💰 Стоимость тура</span>
+                <span class="info-value">{{ notification.booking.price }} {{ notification.booking.currency }}</span>
+            </div>
+
+            {% if notification.departure_airport %}
+            <div class="info-item">
+                <span class="info-label">✈️ Аэропорт вылета</span>
+                <span class="info-value">{{ notification.departure_airport }}</span>
+            </div>
+            {% endif %}
+
+            {% if notification.arrival_airport %}
+            <div class="info-item">
+                <span class="info-label">🛬 Аэропорт прилета</span>
+                <span class="info-value">{{ notification.arrival_airport }}</span>
+            </div>
+            {% endif %}
+
+            {% if notification.flight_number %}
+            <div class="info-item">
+                <span class="info-label">🎫 Номер рейса</span>
+                <span class="info-value">{{ notification.flight_number }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ИНФОРМАЦИЯ О ТУРЕ -->
+    <div class="card">
+        <h2>🌍 Информация о туре</h2>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Страна</span>
+                <span class="info-value">{{ notification.country }}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Тур</span>
+                <span class="info-value">{{ notification.booking.tour.title }}</span>
+            </div>
+        </div>
+
+        <p style="color: #666; line-height: 1.6; margin-top: 15px;">
+            {{ notification.booking.tour.description|truncatewords:50 }}
+        </p>
+    </div>
+
+    <!-- ВАЖНАЯ ИНФОРМАЦИЯ -->
+    <div class="card">
+        <h2>⚠️ Важная информация</h2>
+
+        <div class="info-box">
+            <h3>📌 Перед вылетом:</h3>
+            <ul>
+                <li><strong>За 3 часа</strong> прибудьте в аэропорт</li>
+                <li>Возьмите с собой <strong>паспорт</strong> и <strong>билет</strong></li>
+                <li>Проверьте <strong>срок действия паспорта</strong> (не менее 6 месяцев)</li>
+                <li>Убедитесь в наличии необходимых <strong>виз и прививок</strong></li>
+                <li>Проверьте погоду в пункте назначения и возьмите необходимую одежду</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h3>🚨 Обязательно:</h3>
+            <p>
+                Сохраните это письмо и распечатайте его или покажите на телефоне при регистрации в аэропорту.
+                Возьмите скриншот и отправьте себе на почту для сохранности.
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h3>💬 Нужна помощь?</h3>
+            <p>
+                <strong>Email:</strong> info@touristplatform.com<br>
+                <strong>Телефон:</strong> +7 (999) 123-45-67<br>
+                <strong>WhatsApp:</strong> +7 (999) 123-45-67
+            </p>
+        </div>
+    </div>
+
+    <!-- ДЕЙСТВИЯ -->
+    <div class="card">
+        <div class="actions">
+            <button onclick="window.print()" class="btn btn-primary">
+                🖨️ Распечатать
+            </button>
+            <a href="/client/messages/" class="btn btn-secondary">
+                💬 Сообщения
+            </a>
+        </div>
+    </div>
+
+    <div class="back-link">
+        <a href="/notifications/">← Все уведомления</a>
+    </div>
+</div>
+
+</body>
+</html>
