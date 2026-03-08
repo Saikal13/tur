@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бюджет - {{ trip.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .header .dates {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .budget-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .overview-card label {
+            font-size: 12px;
+            opacity: 0.9;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .overview-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .overview-card.danger {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.safe {
+            background: linear-gradient(90deg, #4caf50, #45a049);
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #e68900);
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #f44336, #da190b);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .expenses-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .expenses-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .expenses-list {
+            list-style: none;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .expense-item:hover {
+            background: #f9f9f9;
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-left {
+            flex: 1;
+        }
+
+        .expense-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .expense-date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .expense-amount {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+            color: #333;
+        }
+
+        .total-row .amount {
+            color: #667eea;
+        }
+
+        .empty-expenses {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-expenses p {
+            font-size: 16px;
+        }
+
+        .warning-banner {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        .warning-banner strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/api/budget/" class="back-btn">← Назад к списку поездок</a>
+
+        <div class="header">
+            <h1>💰 {{ trip.title }}</h1>
+            <div class="dates">
+                📅 {{ trip.start_date|date:"d.m.Y" }} — {{ trip.end_date|date:"d.m.Y" }}
+            </div>
+
+            {% if is_over_budget %}
+                <div class="warning-banner">
+                    <strong>⚠️ Внимание!</strong>
+                    Вы превысили бюджет на ${{ total_expenses|add:budget|abs|floatformat:2 }}
+                </div>
+            {% endif %}
+
+            <div class="budget-overview">
+                <div class="overview-card">
+                    <label>Бюджет</label>
+                    <div class="value">${{ budget|floatformat:2 }}</div>
+                </div>
+                <div class="overview-card">
+                    <label>Потрачено</label>
+                    <div class="value">${{ total_expenses|floatformat:2 }}</div>
+                </div>
+                <div class="overview-card {% if remaining < 0 %}danger{% endif %}">
+                    <label>{% if remaining >= 0 %}Осталось{% else %}Перерасход{% endif %}</label>
+                    <div class="value">
+                        {% if remaining >= 0 %}
+                            +${{ remaining|floatformat:2 }}
+                        {% else %}
+                            -${{ remaining|abs|floatformat:2 }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill {% if percentage <= 75 %}safe{% elif percentage <= 100 %}warning{% else %}danger{% endif %}"
+                         style="width: {{ percentage|add:0|min:100 }}%">
+                    </div>
+                </div>
+                <div class="progress-info">
+                    <span>Потрачено</span>
+                    <span><strong>{{ percentage|floatformat:1 }}%</strong> от бюджета</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="expenses-section">
+            <h2>📋 Список расходов ({{ expenses|length }} записей)</h2>
+
+            {% if expenses %}
+                <ul class="expenses-list">
+                    {% for expense in expenses %}
+                        <li class="expense-item">
+                            <div class="expense-left">
+                                <div class="expense-title">{{ expense.title }}</div>
+                                <div class="expense-date">{{ expense.date|date:"d.m.Y" }}</div>
+                            </div>
+                            <div class="expense-amount">${{ expense.amount|floatformat:2 }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="total-row">
+                    <span>Всего потрачено:</span>
+                    <span class="amount">${{ total_expenses|floatformat:2 }}</span>
+                </div>
+            {% else %}
+                <div class="empty-expenses">
+                    <p>📌 Расходы пока не добавлены</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

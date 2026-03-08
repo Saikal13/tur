@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.decorators import action
 
 from .models import Trip, Expense
 from .serializers import TripSerializer, ExpenseSerializer
@@ -127,6 +128,79 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Expense.objects.filter(trip__user=self.request.user).order_by("-date", "-id")
+
+
+# ========== НОВЫЙ ViewSet для бюджета ==========
+class BudgetViewSet(viewsets.ViewSet):
+    """Эндпоинт для работы с бюджетом путешествия"""
+    permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
+
+    def list(self, request):
+        """Получить список всех поездок с бюджетом"""
+        trips = Trip.objects.filter(user=request.user).prefetch_related("expenses").order_by("-created_at")
+
+        budget_data = []
+        for trip in trips:
+            total_expenses = trip.total_expenses
+            remaining = float(trip.budget) - float(total_expenses)
+            percentage = 0
+            if trip.budget > 0:
+                percentage = (float(total_expenses) / float(trip.budget)) * 100
+
+            budget_data.append({
+                'id': trip.id,
+                'title': trip.title,
+                'budget': trip.budget,
+                'total_expenses': total_expenses,
+                'remaining': remaining,
+                'percentage': round(percentage, 2),
+                'start_date': trip.start_date,
+                'end_date': trip.end_date,
+                'expenses_count': trip.expenses.count(),
+            })
+
+        context = {
+            'budget_data': budget_data,
+            'total_budget': sum(float(t['budget']) for t in budget_data),
+            'total_spent': sum(float(t['total_expenses']) for t in budget_data),
+        }
+
+        # Если JSON API
+        if request.GET.get("format") == "json":
+            return Response(context)
+
+        # Если HTML
+        return Response(context, template_name="budget.html")
+
+    def retrieve(self, request, pk=None):
+        """Получить бюджет конкретной поездки"""
+        trip = get_object_or_404(Trip, pk=pk, user=request.user)
+
+        total_expenses = trip.total_expenses
+        remaining = float(trip.budget) - float(total_expenses)
+        percentage = 0
+        if trip.budget > 0:
+            percentage = (float(total_expenses) / float(trip.budget)) * 100
+
+        expenses = trip.expenses.all().order_by('-date')
+
+        context = {
+            'trip': trip,
+            'budget': trip.budget,
+            'total_expenses': total_expenses,
+            'remaining': remaining,
+            'percentage': round(percentage, 2),
+            'expenses': expenses,
+            'is_over_budget': total_expenses > trip.budget,
+        }
+
+        # Если JSON API
+        if request.GET.get("format") == "json":
+            return Response(context)
+
+        # Если HTML
+        return Response(context, template_name="trip_budget.html")
 
 
 @login_required

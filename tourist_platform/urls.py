@@ -59,14 +59,9 @@ urlpatterns = [
     path("api/reviews/", include("reviews.urls")),
     path("api/bookings/", include("bookings.urls")),
     path('', include('notifications.urls')),
+    path('', include('info.urls')),
 
-    # HTML / UI
-    # path("bookings/", bookings_page, name="bookings_page"),
-    # path(
-    #     "bookings/request/<int:tour_id>/",
-    #     BookingRequestHTMLView.as_view(),
-    #     name="booking_request_html",
-    # ),
+
 
     path("trips/", include("trips.ui_urls")),
     path("tours/", include("tours.ui_urls")),

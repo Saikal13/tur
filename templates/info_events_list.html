@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}События в {{ country.name }}{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 50px 0;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .filter-box {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 10px 15px;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .event-image {
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        overflow: hidden;
+    }
+
+    .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .event-content {
+        padding: 25px;
+    }
+
+    .event-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .event-text {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .event-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .event-date {
+        display: flex;
+        align-items: center;
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .event-type {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .badge {
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .rating {
+        color: #ffc107;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .btn-detail {
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-detail:hover {
+        background: #764ba2;
+        color: white;
+        text-decoration: none;
+        transform: translateX(3px);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        color: #999;
+    }
+
+    .empty-state h3 {
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .btn-back {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .btn-back:hover {
+        color: #764ba2;
+        transform: translateX(-5px);
+    }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <h1>🎭 События в {{ country.name }}</h1>
+        <p>Фестивали, выставки, концерты и спортивные события</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- ФИЛЬТРЫ -->
+    <div class="filter-box">
+        <form method="GET" class="form-row">
+            <div class="form-group col-md-4">
+                <label class="font-weight-600 mb-2">Тип события</label>
+                <select name="type" class="form-control">
+                    <option value="">Все события</option>
+                    <option value="festival" {% if current_type == 'festival' %}selected{% endif %}>🎪 Фестиваль</option>
+                    <option value="exhibition" {% if current_type == 'exhibition' %}selected{% endif %}>🖼️ Выставка</option>
+                    <option value="concert" {% if current_type == 'concert' %}selected{% endif %}>🎵 Концерт</option>
+                    <option value="sport" {% if current_type == 'sport' %}selected{% endif %}>⚽ Спорт</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label class="font-weight-600 mb-2">Месяц</label>
+                <select name="month" class="form-control">
+                    <option value="">Любой месяц</option>
+                    <option value="1">📅 Январь</option>
+                    <option value="2">📅 Февраль</option>
+                    <option value="3">📅 Март</option>
+                    <option value="4">📅 Апрель</option>
+                    <option value="5">📅 Май</option>
+                    <option value="6">📅 Июнь</option>
+                    <option value="7">📅 Июль</option>
+                    <option value="8">📅 Август</option>
+                    <option value="9">📅 Сентябрь</option>
+                    <option value="10">📅 Октябрь</option>
+                    <option value="11">📅 Ноябрь</option>
+                    <option value="12">📅 Декабрь</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label class="font-weight-600 mb-2">&nbsp;</label>
+                <button type="submit" class="btn btn-primary btn-block">
+                    🔍 Фильтровать
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- СОБЫТИЯ -->
+    {% if events %}
+        <div class="row">
+            {% for event in events %}
+            <div class="col-md-6">
+                <div class="event-card">
+                    <div class="event-image">
+                        {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                        {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            🎭
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="event-content">
+                        <h4 class="event-title">{{ event.title }}</h4>
+                        <p class="event-text">{{ event.description }}</p>
+                        <div class="event-meta">
+                            <div class="event-date">
+                                📅 {{ event.start_date|date:"d.m.Y" }} - {{ event.end_date|date:"d.m.Y" }}
+                            </div>
+                            <div class="event-type">
+                                <span class="badge" style="background: #f0f1ff; color: #667eea;">
+                                    {{ event.get_event_type_display }}
+                                </span>
+                                <span class="rating">⭐ {{ event.rating }}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <a href="{% url 'info:event_detail' event.id %}" class="btn-detail">
+                                Подробнее →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>🎭 События не найдены</h3>
+            <p>Попробуйте изменить параметры фильтра или вернитесь позже</p>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'info:country_detail' country.id %}" class="btn-back">
+        ← Вернуться на страницу страны
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>{{ attraction.name }}</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6fb;
+}
+
+.container{
+width:900px;
+margin:auto;
+margin-top:40px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>{{ attraction.name }}</h1>
+
+{% if attraction.image %}
+<img src="{{ attraction.image.url }}">
+{% endif %}
+
+<p>{{ attraction.description }}</p>
+
+<p><b>Тип:</b> {{ attraction.get_attraction_type_display }}</p>
+
+<p><b>Рейтинг:</b> {{ attraction.rating }}</p>
+
+<p><b>Страна:</b> {{ attraction.country.name }}</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>{{ event.title }}</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6fb;
+}
+
+.container{
+width:900px;
+margin:auto;
+margin-top:40px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>{{ event.title }}</h1>
+
+{% if event.image %}
+<img src="{{ event.image.url }}">
+{% endif %}
+
+<p>{{ event.description }}</p>
+
+<p><b>Тип события:</b> {{ event.get_event_type_display }}</p>
+
+<p><b>Дата начала:</b> {{ event.start_date }}</p>
+
+<p><b>Дата окончания:</b> {{ event.end_date }}</p>
+
+<p><b>Страна:</b> {{ event.country.name }}</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

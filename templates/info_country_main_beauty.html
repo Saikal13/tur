@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ country.name }}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 80px 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+        }
+
+        .section {
+            margin: 50px 0;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #ede9fe;
+            color: #5b21b6;
+            border-radius: 999px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .card h4 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .meta {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .empty {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <div class="container">
+            <h1>{{ country.name }}</h1>
+            <p>Информация о стране, факты, новости и события</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <section class="section">
+            <h2>Интересные факты</h2>
+            {% if facts %}
+                <div class="grid">
+                    {% for fact in facts %}
+                        <div class="card">
+                            <span class="badge">{{ fact.get_fact_type_display }}</span>
+                            <p>{{ fact.fact }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">Фактов пока нет</div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>Новости</h2>
+            {% if news %}
+                <div class="grid">
+                    {% for item in news %}
+                        <div class="card">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}" alt="{{ item.title }}">
+                            {% endif %}
+                            <span class="badge">{{ item.get_category_display }}</span>
+                            <h4>{{ item.title }}</h4>
+                            <div class="meta">{{ item.created_at|date:"d.m.Y H:i" }}</div>
+                            <p>{{ item.content }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">Новостей пока нет</div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>Достопримечательности</h2>
+            {% if attractions %}
+                <div class="grid">
+                    {% for attraction in attractions %}
+                        <div class="card">
+                            {% if attraction.image %}
+                                <img src="{{ attraction.image.url }}" alt="{{ attraction.name }}">
+                            {% endif %}
+                            <h4>{{ attraction.name }}</h4>
+                            <div class="meta">
+                                Тип: {{ attraction.get_attraction_type_display }} |
+                                Рейтинг: {{ attraction.rating }}
+                            </div>
+                            <p>{{ attraction.description }}</p>
+                            <a href="{% url 'info:attraction_detail' attraction.id %}" class="btn">Подробнее</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">Достопримечательностей пока нет</div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>События</h2>
+            {% if events %}
+                <div class="grid">
+                    {% for event in events %}
+                        <div class="card">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                            {% endif %}
+                            <h4>{{ event.title }}</h4>
+                            <div class="meta">
+                                {{ event.get_event_type_display }} |
+                                {{ event.start_date }} — {{ event.end_date }}
+                            </div>
+                            <p>{{ event.description }}</p>
+                            <a href="{% url 'info:event_detail' event.id %}" class="btn">Подробнее</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">Событий пока нет</div>
+            {% endif %}
+        </section>
+
+    </div>
+
+</body>
+</html>

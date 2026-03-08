@@ -4,20 +4,20 @@ from .models import TourNotification
 
 @admin.register(TourNotification)
 class TourNotificationAdmin(admin.ModelAdmin):
-    list_display = ('booking', 'country', 'departure_date', 'departure_time', 'is_sent', 'created_at')
-    list_filter = ('is_sent', 'is_read', 'created_at')
-    search_fields = ('booking__name', 'country', 'flight_number')
+    list_display = ('booking', 'country', 'departure_date', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at', 'country')
+    search_fields = ('booking__name', 'booking__email', 'country')
     readonly_fields = ('created_at', 'sent_at')
 
     fieldsets = (
-        ('Заявка', {
+        ('Booking Info', {
             'fields': ('booking',)
         }),
-        ('Детали вылета', {
+        ('Flight Details', {
             'fields': ('country', 'departure_date', 'departure_time', 'departure_airport', 'arrival_airport',
                        'flight_number')
         }),
-        ('Статус', {
+        ('Status', {
             'fields': ('is_sent', 'is_read', 'created_at', 'sent_at')
         }),
     )

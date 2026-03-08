@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 
 from trips.models import Trip
 from tours.models import Tour
+from info.models import Country
 from django.contrib.auth.models import User
 
 
@@ -77,10 +78,24 @@ def home(request):
     if next_trip:
         days_to_start = (next_trip.start_date - today).days
 
+    # ✅ НОВОЕ: Страны с новостями и фактами
+    countries_with_info = Country.objects.prefetch_related(
+        'news', 'facts', 'attractions', 'events'
+    )[:6]
+
+    # ✅ НОВОЕ: Уведомления
+    try:
+        from notifications.models import TourNotification
+        unread_count = TourNotification.objects.filter(is_read=False).count()
+    except:
+        unread_count = 0
+
     context = {
         "popular_tours": popular_tours,
         "next_trip": next_trip,
         "days_to_start": days_to_start,
+        "countries_with_info": countries_with_info,  # ✅ НОВОЕ
+        "unread_count": unread_count,  # ✅ НОВОЕ
     }
     return render(request, "home.html", context)
 

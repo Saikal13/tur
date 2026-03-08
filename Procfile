@@ -1,0 +1,1 @@
+web: gunicorn tourist_platform_проекта.wsgi

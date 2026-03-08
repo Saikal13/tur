@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -47,7 +48,6 @@
       gap:16px; padding:12px 0;
     }
 
-    /* ✅ UPDATED BRAND AREA */
     .brand-wrap{
       display:flex; align-items:center; gap:12px;
       white-space:nowrap;
@@ -120,7 +120,6 @@
       border:2px solid rgba(255,255,255,.55);
     }
 
-    /* ✅ BADGE ДЛЯ УВЕДОМЛЕНИЙ */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -269,7 +268,6 @@
     .card h3{margin:0 0 8px; font-size:18px}
     .card p{margin:0; color:var(--muted); line-height:1.6; font-size:14px}
 
-    /* ✅ NEW: витрина туров/отзывов */
     .grid-3{display:grid; grid-template-columns: repeat(3, 1fr); gap:18px;}
     .grid-2{display:grid; grid-template-columns: repeat(2, 1fr); gap:18px;}
     .mini-card{
@@ -369,52 +367,6 @@
     }
     .band-card .s{color:var(--muted); margin:0; line-height:1.6;}
 
-    .cta2{
-      background:#fff;
-      border-top:1px solid rgba(15,23,42,.06);
-      border-bottom:1px solid rgba(15,23,42,.06);
-    }
-    .cta2-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:22px;
-      align-items:center;
-    }
-    .cta2 h2{
-      margin:0 0 10px;
-      font-size:44px;
-      letter-spacing:-.7px;
-      line-height:1.05;
-    }
-    .cta2 p{margin:0; color:var(--muted); line-height:1.7}
-    .formbox{
-      background:#fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border:1px solid rgba(15,23,42,.06);
-      padding:22px;
-    }
-    .formbox h3{margin:0 0 14px; font-size:22px; text-align:center;}
-    .field{
-      width:100%;
-      padding:12px 12px;
-      border-radius: 12px;
-      border:1px solid rgba(15,23,42,.14);
-      background:#f3f4f6;
-      outline:none;
-      margin-bottom:12px;
-      font-weight:650;
-    }
-    .formbtn{
-      width:100%;
-      padding:14px 14px;
-      border-radius: 12px;
-      border:0;
-      background: var(--yellow);
-      font-weight:1000;
-      cursor:pointer;
-    }
-
     .hotels{background:#fff;}
     .hotel-grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:18px;}
     .hotel{
@@ -437,86 +389,90 @@
     .hotel h3{margin:0 0 10px; font-size:22px}
     .hotel p{margin:0; color:var(--muted); line-height:1.7}
 
-    .included-grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:18px;}
-    .inc{
+    .news-facts-section {
+      background: #f3f4f6;
+    }
+
+    .news-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .news-facts-card {
+      background: white;
       border-radius: var(--radius);
-      overflow:hidden;
-      background:#fff;
-      border:1px solid rgba(15,23,42,.06);
       box-shadow: var(--shadow);
+      border: 1px solid rgba(15,23,42,.06);
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
-    .inc img{width:100%; height:190px; object-fit:cover}
-    .inc .cap{padding:14px 16px; font-weight:900; font-size:16px;}
 
-    .pricing{
-      background: #0b0f14;
-      color:#fff;
-      position:relative;
-      overflow:hidden;
+    .news-facts-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.12);
     }
-    .pricing::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(circle at 15% 25%, rgba(255,255,255,.08), transparent 38%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,.06), transparent 42%);
-      pointer-events:none;
-    }
-    .pricing .title{color:#fff}
-    .pricing .sub{color:rgba(255,255,255,.74)}
-    .price-table{
-      position:relative;
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      overflow:hidden;
-    }
-    .pt-row{
-      display:grid;
-      grid-template-columns: 180px repeat(4, 1fr);
-      gap:0;
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .pt-row:last-child{border-bottom:0}
-    .pt-cell{
-      padding:14px 14px;
-      border-right:1px solid rgba(255,255,255,.08);
-      font-weight:750;
-    }
-    .pt-cell:last-child{border-right:0}
-    .pt-head .pt-cell{
-      font-weight:1000;
-      color:rgba(255,255,255,.92);
-      background: rgba(255,255,255,.03);
-    }
-    .pt-label{color:rgba(255,255,255,.85)}
-    .pt-muted{color:rgba(255,255,255,.70); font-weight:650}
-    .pt-ok{color: var(--yellow); font-weight:1000; font-size:18px}
 
-    .price-cards{
-      position:relative;
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:14px;
-      margin-top:18px;
+    .news-facts-header {
+      height: 180px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+      position: relative;
+      overflow: hidden;
     }
-    .pc{
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      padding:18px;
-      text-align:center;
+
+    .news-facts-header img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.3;
     }
-    .pc .old{color:rgba(255,255,255,.45); text-decoration:line-through; font-weight:800; font-size:12px}
-    .pc .val{font-size:44px; font-weight:1100; margin:8px 0 12px}
-    .pc .pbtn{
-      display:inline-flex; justify-content:center; align-items:center;
-      width:100%;
-      padding:14px 14px;
-      border-radius:12px;
-      background: var(--yellow);
-      color:#1b1400;
-      font-weight:1100;
+
+    .news-facts-content {
+      padding: 22px;
+    }
+
+    .news-facts-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 12px;
+      color: #111827;
+    }
+
+    .news-facts-text {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      margin: 0 0 15px;
+    }
+
+    .news-facts-date {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+
+    .view-all-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .view-all-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+      color: white;
     }
 
     footer{background: var(--bg); color:#fff; padding: 36px 0;}
@@ -545,15 +501,10 @@
       .cards{grid-template-columns: 1fr;}
       .grid-3{grid-template-columns: 1fr;}
       .grid-2{grid-template-columns: 1fr;}
+      .news-facts-grid{grid-template-columns: 1fr;}
       .it-row, .it-row:nth-child(even){grid-template-columns: 1fr;}
       .band-grid{grid-template-columns: 1fr;}
-      .cta2-grid{grid-template-columns: 1fr;}
       .hotel-grid{grid-template-columns: 1fr;}
-      .included-grid{grid-template-columns: 1fr;}
-      .pt-row{grid-template-columns: 1fr;}
-      .pt-cell{border-right:0; border-bottom:1px solid rgba(255,255,255,.10)}
-      .pt-row .pt-cell:last-child{border-bottom:0}
-      .price-cards{grid-template-columns: 1fr;}
       .footer-grid{grid-template-columns: 1fr;}
     }
   </style>
@@ -564,28 +515,25 @@
     <div class="container">
       <div class="nav">
 
-        <!-- ✅ UPDATED: Brand is clickable and leads to /flights/ -->
         <div class="brand-wrap">
           <a class="brand" href="/flights/" title="Перейти к авиабилетам">
             <div class="brand-badge">✈</div>
           </a>
 
-          <!-- ✅ Optional: extra chip button (still leads to flights) -->
           <a class="brand-chip" href="/flights/">Авиабилеты</a>
         </div>
 
         <nav class="menu">
           <a href="#home">Главная</a>
           <a href="#about">О туре</a>
+          <a href="#news">Новости</a>
           <a href="#itinerary">Маршрут</a>
-          <a href="#contact">Контакты</a>
         </nav>
 
         <div class="cta">
           {% if user.is_authenticated %}
             <span style="font-weight: 700; margin-right: 5px;">{{ user.username }}</span>
 
-            <!-- ✅ ИКОНКА УВЕДОМЛЕНИЙ -->
             <a class="btn btn-ghost" href="/notifications/" title="Мои уведомления о турах">
               🎫
               {% if unread_count > 0 %}
@@ -593,7 +541,6 @@
               {% endif %}
             </a>
 
-            <!-- ✅ ИКОНКА СМС -->
             <a class="btn btn-ghost" href="/client/messages/" title="Мои сообщения">
               💬 СМС
             </a>
@@ -620,11 +567,11 @@
             </p>
 
             <div class="hero-actions">
-              <a class="btn btn-yellow" href="#contact">Забронировать</a>
+              <a class="btn btn-yellow" href="#news">Исследовать</a>
               <a class="btn btn-outline-white" href="#about">Подробнее</a>
             </div>
 
-            <div class="hero-note">Выберите тур и перейдите к бронированию.</div>
+            <div class="hero-note">Выберите страну и узнайте больше о ней.</div>
           </div>
 
           <div></div>
@@ -646,11 +593,10 @@
         <div class="textbox">
           <h2>Классный тур, чтобы отдохнуть</h2>
           <p>
-            Здесь можно кратко описать идею проекта: туры, отзывы, бронирования.
-            Дальше эти блоки можно сделать динамическими, подгружая данные из API.
+            Исследуй лучшие страны мира, узнай интересные факты и выбери идеальный маршрут для своего путешествия.
           </p>
           <p>
-            Пример: список туров — <b>/api/tours/</b>, бронирования — <b>/api/bookings/</b>, отзывы — <b>/api/reviews/</b>.
+            Новое приложение <b>info</b> предоставляет полную информацию о каждой стране: новости, интересные факты, места для посещения и события.
           </p>
         </div>
       </div>
@@ -677,20 +623,6 @@
 
           <div style="margin-top:10px; font-size:12px; color:var(--muted); line-height:1.5;">
             Примеры: <b>?search=paris</b> • <b>?page=2</b>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="icon">📅</div>
-          <h3>📁 bookings</h3>
-          <p style="margin:0 0 12px; color:var(--muted)">Создание бронирования • Просмотр своих бронирований</p>
-
-          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-            <a class="btn btn-yellow" href="/bookings/">Открыть bookings</a>
-          </div>
-
-          <div style="margin-top:10px; font-size:12px; color:var(--muted); line-height:1.5;">
-            Внутри DRF можно: <b>GET</b> (список) и <b>POST</b> (создание).
           </div>
         </div>
 
@@ -765,6 +697,65 @@
     </div>
   </section>
 
+  <section id="news" class="news-facts-section">
+    <div class="container">
+      <h2 class="title">🌍 Новости и факты о странах</h2>
+      <p class="sub">Узнай интересные факты, последние новости и события в разных странах мира.</p>
+
+      {% if countries_with_info %}
+      <div class="news-facts-grid">
+        {% for country in countries_with_info %}
+        <div class="news-facts-card">
+          <div class="news-facts-header">
+            {% if country.image %}
+              <img src="{{ country.image.url }}" alt="{{ country.name }}">
+            {% endif %}
+            <span style="position: relative; z-index: 2;">🌏</span>
+          </div>
+          <div class="news-facts-content">
+            <h3 class="news-facts-title">{{ country.name }}</h3>
+
+            {% with first_fact=country.facts.all|first %}
+            {% if first_fact %}
+            <p class="news-facts-text">
+              <strong>💡 Факт:</strong> {{ first_fact.fact|truncatewords:15 }}
+            </p>
+            {% endif %}
+            {% endwith %}
+
+            {% with first_news=country.news.all|first %}
+            {% if first_news %}
+            <p class="news-facts-text">
+              <strong>📰 Новость:</strong> {{ first_news.title }}
+            </p>
+            {% endif %}
+            {% endwith %}
+
+            <p class="news-facts-date">
+              {% with attractions_count=country.attractions.all|length events_count=country.events.all|length %}
+              🏛️ {{ attractions_count }} мест • 🎭 {{ events_count }} событий
+              {% endwith %}
+            </p>
+
+            <div style="margin-top: 15px;">
+              <a href="{% url 'info:country_detail' country.id %}" class="view-all-btn">
+                Исследовать →
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="icon">🌍</div>
+        <h3>Информация о странах</h3>
+        <p>Добавь новости и факты о странах в админке приложения info.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
   <section id="calendar">
     <div class="container">
       <h2 class="title">Календарь поездок</h2>
@@ -792,8 +783,7 @@
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <a class="btn btn-yellow" href="/api/trips/trips/">Мои поездки</a>
             <a class="btn btn-ghost" href="/api/trips/budget/" style="color:#111;border:1px solid rgba(15,23,42,.12); background:#fff;">Бюджет</a>
-            <a class="btn btn-ghost" href="/api/trips/expenses/" style="color:#111;border:1px solid rgba(15,23,42,.12); background:#fff;">Расходы</a>
-          </div>
+            <a class="btn btn-ghost" href="/api/trips/trips/" style="color:#111;border:1px solid rgba(15,23,42,.12); background:#fff;">Расходы</a>          </div>
           <p class="muted" style="margin-top:10px; font-size:12px;">POST расход: <b>/api/trips/expenses/</b></p>
         </div>
 
@@ -899,7 +889,7 @@
           <div class="day">День 1</div>
           <h3>Прилет и заселение</h3>
           <p>Встреча, трансфер, заселение в отель. Вечером — прогулка и первый обзор города.</p>
-          <a class="link" href="#contact">Узнать больше</a>
+          <a class="link" href="#news">Узнать больше</a>
         </div>
       </div>
 
@@ -908,7 +898,7 @@
           <div class="day">День 2</div>
           <h3>Экскурсии и свободное время</h3>
           <p>Днём — главные места, вечером — свободный маршрут. Можно связать с "программой тура" из модели Tour.</p>
-          <a class="link" href="#contact">Узнать больше</a>
+          <a class="link" href="#news">Узнать больше</a>
         </div>
         <div class="it-img">
           <img alt="Day 2" src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1800&q=60">
@@ -923,7 +913,7 @@
           <div class="day">День 3</div>
           <h3>Переезд и новые локации</h3>
           <p>Смена города/локации. Отлично подходит под "городские туры" и "побережье".</p>
-          <a class="link" href="#contact">Узнать больше</a>
+          <a class="link" href="#news">Узнать больше</a>
         </div>
       </div>
     </div>
@@ -947,29 +937,6 @@
           <div class="k">Транспорт</div>
           <p class="s">Трансфер и поездки по программе</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact" class="cta2">
-    <div class="container">
-      <div class="cta2-grid">
-        <div>
-          <h2>Забронируй тур<br/>со скидкой <span style="color:#0ea5a0">$300</span></h2>
-          <p>Это просто демонстрация блока. В реальном проекте отправку формы можно связать с API заявок.</p>
-        </div>
-
-        <form class="formbox" method="POST" action="/api/bookings/">
-          {% csrf_token %}
-          {% if user.is_authenticated %}
-            <input type="hidden" name="owner" value="{{ user.id }}">
-          {% endif %}
-          <h3>Оставьте заявку — мы перезвоним</h3>
-          <input class="field" name="name" placeholder="Имя*" required />
-          <input class="field" name="phone" placeholder="Телефон*" required />
-          <input class="field" name="email" placeholder="Email*" required />
-          <button type="submit" class="formbtn">Заказать звонок</button>
-        </form>
       </div>
     </div>
   </section>
@@ -1021,7 +988,7 @@
           <h4>Навигация</h4>
           <ul>
             <li><a href="#home">Главная</a></li>
-            <li><a href="#about">О туре</a></li>
+            <li><a href="#news">Новости и факты</a></li>
             <li><a href="#itinerary">Маршрут</a></li>
             <li><a href="/flights/">Авиабилеты</a></li>
           </ul>
