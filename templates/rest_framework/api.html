@@ -1,0 +1,35 @@
+{% extends "rest_framework/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  body{
+    background: linear-gradient(180deg,#073b8f 0%,#1a64c9 65%,#58a6ff 100%) !important;
+  }
+
+  .tp-hero{
+    text-align:center;
+    color:white;
+    padding:30px 20px;
+  }
+
+  .tp-card{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    margin:20px auto;
+    max-width:1100px;
+  }
+</style>
+
+<div class="tp-hero">
+  <h1>API панель</h1>
+  <p>Tourist Platform API</p>
+</div>
+
+<div class="tp-card">
+  {{ block.super }}
+</div>
+
+{% endblock %}

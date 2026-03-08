@@ -1,0 +1,161 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}API — Tourist Platform{% endblock %}</title>
+
+  <!-- DRF assets -->
+  <link rel="stylesheet" href="{% static 'rest_framework/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'rest_framework/css/bootstrap-tweaks.css' %}">
+  <link rel="stylesheet" href="{% static 'rest_framework/css/prettify.css' %}">
+
+  <style>
+    :root{ --bg1:#073b8f; --bg2:#1a64c9; --bg3:#58a6ff; --yellow:#ffc107; --radius:22px; }
+    body{
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 65%, var(--bg3) 100%) !important;
+      min-height:100vh; overflow-x:hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Hide default DRF navbar */
+    .navbar, .navbar-inverse { display:none !important; }
+
+    .tp-topbar{
+      height:64px; display:flex; align-items:center;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      background: rgba(5, 35, 90, .22);
+      backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 999;
+    }
+    .tp-container{
+      max-width:1100px; margin:0 auto; padding:0 18px; width:100%;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .tp-brand{display:flex; align-items:center; gap:10px; font-weight:1000; color:#fff; text-decoration:none; white-space:nowrap;}
+    .tp-logo{
+      width:42px; height:42px; border-radius:14px; display:grid; place-items:center;
+      background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,.12); font-size:18px;
+    }
+    .tp-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .tp-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:14px; font-weight:900;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10); color:#fff; text-decoration:none;
+      white-space:nowrap; transition:.15s ease;
+    }
+    .tp-btn:hover{transform: translateY(-1px);}
+    .tp-btn-yellow{background: var(--yellow); color:#1b1400; border-color: rgba(255,193,7,.55);}
+
+    .tp-hero{
+      max-width:1100px; margin:0 auto; padding:26px 18px 10px;
+      text-align:center; color:#fff; position:relative; z-index:2;
+    }
+    .tp-hero h1{margin:0 0 8px; font-size: clamp(22px, 3.1vw, 40px); font-weight:1100; letter-spacing:-.6px;}
+    .tp-hero p{margin:0 auto; max-width:80ch; color: rgba(255,255,255,.86); line-height:1.6; font-weight:650;}
+
+    .tp-card{
+      max-width:1100px; margin:14px auto 110px; padding:18px;
+      background: rgba(255,255,255,.96); border-radius: var(--radius);
+      box-shadow: 0 18px 60px rgba(0,0,0,.22);
+      position:relative; z-index:2;
+      color: #0f172a !important;
+    }
+
+    /* DRF content visibility */
+    .tp-card a{ color:#0b5ed7 !important; }
+    .tp-card .text-muted{ color:#64748b !important; }
+    .tp-card p, .tp-card li, .tp-card label, .tp-card span, .tp-card div,
+    .tp-card h1, .tp-card h2, .tp-card h3, .tp-card h4{ color:#0f172a !important; }
+    .tp-card table, .tp-card th, .tp-card td{ color:#0f172a !important; }
+
+    /* DRF/Bootstrap polish */
+    .breadcrumb{background:transparent;}
+    h1,h2,h3{font-weight:900;}
+    .btn{border-radius:12px !important; font-weight:900;}
+    .btn-primary{background: var(--yellow) !important; border-color: rgba(255,193,7,.60) !important; color:#1b1400 !important;}
+    .form-control{border-radius:12px !important;}
+    pre{border-radius:16px !important;}
+    .tp-card .form-control{ color:#0f172a !important; background:#fff !important; }
+    .tp-card input, .tp-card select, .tp-card textarea{ color:#0f172a !important; }
+
+    .tp-clouds{
+      position:fixed; left:0; right:0; bottom:-1px; height:240px;
+      z-index:1; pointer-events:none;
+    }
+    .tp-clouds svg{width:100%; height:100%; display:block;}
+
+    /* IMPORTANT: DRF sometimes expects these wrappers */
+    #content, .content { display:block; }
+  </style>
+
+  {% block style %}{% endblock %}
+  {% block extrahead %}{% endblock %}
+</head>
+
+<body>
+{% block body %}
+  <div class="tp-topbar">
+    <div class="tp-container">
+      <a class="tp-brand" href="/" title="На главную">
+        <span class="tp-logo">✈</span>
+        <span>Tourist Platform</span>
+      </a>
+
+      <div class="tp-actions">
+        <a class="tp-btn" href="/">На главную</a>
+        <a class="tp-btn tp-btn-yellow" href="/api-page/">API разделы</a>
+
+        {% if user.is_authenticated %}
+          <span class="tp-btn" style="cursor:default; opacity:.95;">{{ user.username }}</span>
+          <a class="tp-btn" href="/logout/">Выйти</a>
+        {% else %}
+          <a class="tp-btn" href="/login/">Вход</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-hero">
+    <h1>API панель</h1>
+    <p>Это browsable API Django REST framework в дизайне сайта. Все GET/POST формы работают.</p>
+  </div>
+
+  <!-- DRF expects a content wrapper in some templates -->
+  <div id="content" class="content">
+    <div class="tp-card">
+      {% block breadcrumbs %}{% endblock %}
+
+      {# MAIN DRF CONTENT #}
+      {% block content %}{% endblock %}
+
+      {# extra compatibility (some DRF templates use these) #}
+      {% block content_wrapper %}{% endblock %}
+      {% block page_content %}{% endblock %}
+    </div>
+  </div>
+
+  <div class="tp-clouds" aria-hidden="true">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#e9f6ff" fill-opacity="1"
+            d="M0,256L60,245.3C120,235,240,213,360,208C480,203,600,213,720,218.7C840,224,960,224,1080,202.7C1200,181,1320,139,1380,117.3L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+      </path>
+      <path fill="#ffffff" fill-opacity="1"
+            d="M0,288L80,277.3C160,267,320,245,480,234.7C640,224,800,224,960,229.3C1120,235,1280,245,1360,250.7L1440,256L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z">
+      </path>
+    </svg>
+  </div>
+{% endblock %}
+
+  <script src="{% static 'rest_framework/js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'rest_framework/js/prettify-min.js' %}"></script>
+  <script>window.prettyPrint && prettyPrint();</script>
+
+  {% block script %}{% endblock %}
+  {% block extrabody %}{% endblock %}
+</body>
+</html>

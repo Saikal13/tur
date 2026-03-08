@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Регистрация — Tourist Platform</title>
+
+  <style>
+    :root{
+      --bg:#071821;
+      --card: rgba(255,255,255,.10);
+      --card2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.18);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --yellow:#f6c400;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+      --fieldText:#0b1320;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height:100vh;
+      color:var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+    }
+
+    .bg{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(circle at 18% 25%, rgba(246,196,0,.15), transparent 40%),
+        radial-gradient(circle at 82% 68%, rgba(16,179,165,.12), transparent 45%),
+        linear-gradient(120deg, rgba(7,24,33,.65), rgba(7,24,33,.40)),
+        url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=2400&q=70");
+      background-size:cover;
+      background-position:center;
+      transform: scale(1.02);
+    }
+    .bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(7,24,33,.70), rgba(7,24,33,.85));
+    }
+
+    .wrap{
+      position:relative;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px 16px;
+    }
+
+    .card{
+      width:min(560px, 92vw);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 22px;
+    }
+
+    .title{
+      margin:0 0 6px;
+      font-size:30px;
+      letter-spacing:-.3px;
+      font-weight:1000;
+    }
+    .subtitle{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.5;
+      font-weight:650;
+    }
+
+    .errors{
+      margin:0 0 12px;
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(255, 70, 70, .12);
+      border: 1px solid rgba(255, 70, 70, .25);
+      color: rgba(255,255,255,.92);
+      font-weight:650;
+    }
+    .errors ul{margin:0; padding-left:18px}
+    .errors li{margin:6px 0}
+
+    .field{
+      width:100%;
+      padding:14px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.92);
+      color: var(--fieldText);
+      outline:none;
+      font-weight:750;
+      margin-bottom:12px;
+      transition:.15s ease;
+    }
+    .field:focus{
+      border-color: rgba(246,196,0,.70);
+      box-shadow: 0 0 0 4px rgba(246,196,0,.18);
+    }
+
+    .btn{
+      width:100%;
+      border:0;
+      cursor:pointer;
+      padding:14px 14px;
+      border-radius: 14px;
+      background: var(--yellow);
+      color:#1b1400;
+      font-weight:1000;
+      letter-spacing:.2px;
+      transition:.15s ease;
+      user-select:none;
+    }
+    .btn:active{transform: translateY(1px)}
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:12px;
+      color:var(--muted);
+      font-weight:700;
+      flex-wrap:wrap;
+    }
+    a{color: rgba(255,255,255,.92); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .hint{
+      margin-top:10px;
+      font-size:12.5px;
+      color: rgba(255,255,255,.65);
+      font-weight:650;
+      line-height:1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <h1 class="title">Регистрация</h1>
+      <p class="subtitle">Создайте аккаунт — и получите доступ к платформе.</p>
+
+      {% if form.errors %}
+        <div class="errors">
+          <strong>Ошибка:</strong>
+          <ul>
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <input class="field" type="text" name="username" placeholder="Имя пользователя" autocomplete="username" required />
+        <input class="field" type="password" name="password1" placeholder="Пароль" autocomplete="new-password" required />
+        <input class="field" type="password" name="password2" placeholder="Повторите пароль" autocomplete="new-password" required />
+
+        <button class="btn" type="submit">Создать аккаунт</button>
+
+        <div class="row">
+          <span>Уже есть аккаунт? <a href="{% url 'login_page' %}">Войти</a></span>
+          <span><a href="/">На главную</a></span>
+        </div>
+
+        <div class="hint">
+          После регистрации вы автоматически войдёте и попадёте на главную страницу.
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

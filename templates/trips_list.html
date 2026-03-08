@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Бюджет поездок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#F6F8FC;--card:#fff;--text:#0F172A;--muted:#64748B;--line:rgba(15,23,42,.10);--shadow:0 14px 40px rgba(15,23,42,.08);--radius:18px}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:26px 18px 56px}
+    h1{margin:0 0 12px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+    .head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+    .muted{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+    th{color:var(--muted);font-size:12px;background:#F8FAFF}
+    tr:last-child td{border-bottom:none}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:end;">
+      <div>
+        <h1>Бюджет поездок</h1>
+        <div class="muted">Сводка по бюджету и расходам</div>
+      </div>
+      <a class="pill" href="/api/trips/">← Назад к поездкам</a>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="head">
+        <strong>Список</strong>
+        <span class="pill">Всего: {{ trips|length }}</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Поездка</th>
+            <th>Даты</th>
+            <th>Бюджет</th>
+            <th>Потрачено</th>
+            <th>Осталось</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for t in trips %}
+          <tr>
+            <td><strong>{{ t.title }}</strong></td>
+            <td>{{ t.start_date }} → {{ t.end_date }}</td>
+            <td>{{ t.budget }}</td>
+            <td>{{ t.total_expenses }}</td>
+            <td>{{ t.budget|floatformat:2|add:"0" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="muted">Пока нет данных</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Билеты по всему миру — Tourist Platform</title>
+
+  <style>
+    :root{
+      --bg1:#073b8f;
+      --bg2:#1a64c9;
+      --bg3:#58a6ff;
+
+      --card: rgba(255,255,255,.14);
+      --card2: rgba(255,255,255,.10);
+      --line: rgba(255,255,255,.18);
+
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.86);
+
+      --shadow: 0 18px 60px rgba(0,0,0,.22);
+      --shadow2: 0 10px 30px rgba(0,0,0,.18);
+      --radius:22px;
+
+      --yellow:#ffc107;
+      --max: 1100px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 65%, var(--bg3) 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--max); margin:0 auto; padding:0 18px;}
+
+    /* Top bar */
+    .topbar{
+      height:64px;
+      display:flex;
+      align-items:center;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      background: rgba(5, 35, 90, .22);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar .inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      width:100%;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:1000;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .logo{
+      width:42px; height:42px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      font-size:18px;
+    }
+    .actions{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:900;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      cursor:pointer;
+      transition:.15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn:active{transform: translateY(0)}
+    .btn-yellow{
+      background: var(--yellow);
+      color:#1b1400;
+      border-color: rgba(255,193,7,.55);
+      box-shadow: 0 14px 28px rgba(255,193,7,.20);
+    }
+    .btn-white{
+      background: rgba(255,255,255,.92);
+      color:#0b1320;
+      border:1px solid rgba(0,0,0,.06);
+    }
+
+    /* Hero */
+    .hero{
+      padding: 34px 0 18px;
+      text-align:center;
+      position:relative;
+      z-index:2;
+    }
+    .hero h1{
+      margin: 0 0 8px;
+      font-size: clamp(26px, 3.5vw, 46px);
+      letter-spacing:-.7px;
+      font-weight:1100;
+    }
+    .hero p{
+      margin:0 auto;
+      max-width: 80ch;
+      color: var(--muted);
+      line-height:1.6;
+      font-weight:650;
+    }
+
+    /* Search card */
+    .search-wrap{
+      display:flex;
+      justify-content:center;
+      padding: 10px 0 22px;
+      position:relative;
+      z-index:2;
+    }
+    .search{
+      width:min(940px, 100%);
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .tabs{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      margin-bottom:12px;
+    }
+    .tab{
+      border:0;
+      cursor:pointer;
+      padding:10px 16px;
+      border-radius: 14px;
+      font-weight:1000;
+      color: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      transition:.15s ease;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.20);
+      box-shadow: var(--shadow2);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1.2fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns: 1fr;} }
+
+    .field{
+      width:100%;
+      padding:14px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.92);
+      color:#0b1320;
+      outline:none;
+      font-weight:800;
+    }
+    .field::placeholder{color:#94a3b8; font-weight:700}
+
+    .row2{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+      align-items:center;
+      margin-top:12px;
+    }
+    .mini{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+      color: rgba(255,255,255,.86);
+      font-weight:750;
+      font-size:12px;
+    }
+    .pill{
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+    }
+
+    .errors{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      background: rgba(176,0,32,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      color:#fff;
+      font-weight:800;
+      text-align:left;
+    }
+
+    /* Results */
+    .results{
+      position:relative;
+      z-index:2;
+      padding: 8px 0 110px;
+    }
+    .results-inner{
+      max-width: 940px;
+      margin: 0 auto;
+    }
+    .result-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.92);
+      font-weight:900;
+    }
+    .offer{
+      background: rgba(255,255,255,.94);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius: 22px;
+      box-shadow: var(--shadow2);
+      padding: 14px 16px;
+      color:#0b1320;
+      margin-bottom:12px;
+    }
+    .offer-top{
+      display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      align-items:center;
+    }
+    .route{
+      font-weight:1100;
+      font-size:16px;
+      letter-spacing:-.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .air-badge{
+      width:38px; height:38px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(15,23,42,.05);
+      border:1px solid rgba(15,23,42,.08);
+      font-weight:1100;
+      color:#0b1320;
+    }
+    .price{
+      font-weight:1200;
+      font-size:20px;
+      white-space:nowrap;
+    }
+    .meta{
+      margin-top:6px;
+      color:#4b5563;
+      font-weight:750;
+      font-size:13px;
+      line-height:1.6;
+    }
+    .offer-actions{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(45,212,191,.14);
+      border:1px solid rgba(45,212,191,.25);
+      font-weight:1000;
+      color:#064e46;
+      font-size:12px;
+    }
+
+    /* Clouds bottom */
+    .clouds{
+      position:fixed;
+      left:0; right:0;
+      bottom:-1px;
+      height:240px;
+      z-index:1;
+      pointer-events:none;
+    }
+    .clouds svg{width:100%; height:100%; display:block}
+
+    /* Demo payment modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:100;
+      background: rgba(0,0,0,.55);
+      padding:18px;
+    }
+    .modal.open{display:flex;}
+    .modal-card{
+      width:min(520px, 100%);
+      background:#fff;
+      color:#0b1320;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .modal-head{
+      padding:14px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      background: linear-gradient(135deg, rgba(14,165,160,.10), rgba(255,193,7,.12));
+    }
+    .modal-title{
+      font-weight:1200;
+      letter-spacing:-.2px;
+    }
+    .xbtn{
+      border:0;
+      background: rgba(0,0,0,.06);
+      width:40px; height:40px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:1100;
+    }
+    .modal-body{padding:16px;}
+    .pay-row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(15,23,42,.03);
+      margin-bottom:12px;
+      font-weight:900;
+    }
+    .pay-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media(max-width:520px){ .pay-grid{grid-template-columns:1fr;} }
+    .pay-label{font-weight:900; font-size:12px; color:#475569; margin-bottom:6px;}
+    .pay-input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      outline:none;
+      font-weight:800;
+    }
+    .notice{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,193,7,.18);
+      border:1px solid rgba(255,193,7,.35);
+      color:#4a3b00;
+      font-weight:850;
+      line-height:1.5;
+      font-size:13px;
+    }
+    .modal-foot{
+      padding:14px 16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      border-top:1px solid rgba(0,0,0,.08);
+      background:#fff;
+    }
+
+    /* Tiny UX: show return date inside grid when enabled */
+    #returnWrap{display:none;}
+    #returnWrap.show{display:block;}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="container">
+      <div class="inner">
+        <a class="brand" href="/" title="На главную">
+          <span class="logo">✈</span>
+          <span>Tourist Platform</span>
+        </a>
+
+        <div class="actions">
+          <a class="btn" href="/">На главную</a>
+          {% if affiliate_url %}
+            <a class="btn btn-white" href="{{ affiliate_url }}" target="_blank" rel="noopener">Онлайн поиск</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Билеты по всему миру</h1>
+      <p>Выберите маршрут и даты. “Онлайн поиск” откроет партнёра в новой вкладке..</p>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search">
+
+        <div class="tabs" aria-label="Тип маршрута">
+          <button type="button" class="tab active" id="tab-ow">В одну сторону</button>
+          <button type="button" class="tab" id="tab-rt">Туда-обратно</button>
+        </div>
+
+        <form method="get" id="searchForm">
+          <div class="grid">
+            {{ form.origin }}
+            {{ form.destination }}
+            {{ form.depart_date }}
+
+            <div id="returnWrap">
+              {{ form.return_date }}
+            </div>
+
+            {{ form.adults }}
+            {{ form.children }}
+            {{ form.cabin }}
+          </div>
+
+          <div class="row2">
+            <button class="btn btn-yellow" type="submit">Найти билеты</button>
+            {% if affiliate_url %}
+              <a class="btn" href="{{ affiliate_url }}" target="_blank" rel="noopener">Найти онлайн (партнёр)</a>
+            {% endif %}
+          </div>
+
+          <div class="mini">
+            <span class="pill">Подсказка: SVO • IST • DXB • FRU</span>
+            <span class="pill">Демо-результаты ниже</span>
+          </div>
+
+          {% if form.errors %}
+            <div class="errors">
+              <b>Проверьте поля формы:</b>
+              {{ form.errors }}
+            </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="results-inner">
+        <div class="result-head">
+          <div>
+            {% if offers %}
+              Найдено офферов: <span>{{ offers.offers|length }}</span>
+            {% else %}
+              Введите данные и нажмите “Найти билеты”.
+            {% endif %}
+          </div>
+          <div class="pill">Оплата — демо</div>
+        </div>
+
+        {% if offers %}
+          {% for o in offers.offers %}
+            <div class="offer">
+              <div class="offer-top">
+                <div class="route">
+                  <span class="air-badge">{{ o.airline }}</span>
+                  <span>{{ o.origin }} → {{ o.destination }}</span>
+                </div>
+                <div class="price">{{ o.price }} {{ offers.currency }}</div>
+              </div>
+
+              <div class="meta">
+                Вылет: {{ o.depart_at }} • Прилёт: {{ o.arrive_at }}<br/>
+                Пересадок: {{ o.stops }}
+              </div>
+
+              <div class="offer-actions">
+                <span class="badge">
+                  {% if o.stops == 0 %}✅ Прямой{% else %}🧩 С пересадкой{% endif %}
+                </span>
+
+                <!-- IMPORTANT: передаём детали рейса в openPay -->
+                <button
+                  class="btn btn-yellow"
+                  type="button"
+                  onclick="openPay('{{ o.origin }}','{{ o.destination }}','{{ o.price }}','{{ offers.currency }}','{{ o.airline }}','{{ o.depart_at }}','{{ o.arrive_at }}','{{ o.stops }}')">
+                  Купить
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Clouds -->
+  <div class="clouds" aria-hidden="true">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#e9f6ff" fill-opacity="1"
+            d="M0,256L60,245.3C120,235,240,213,360,208C480,203,600,213,720,218.7C840,224,960,224,1080,202.7C1200,181,1320,139,1380,117.3L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+      </path>
+      <path fill="#ffffff" fill-opacity="1"
+            d="M0,288L80,277.3C160,267,320,245,480,234.7C640,224,800,224,960,229.3C1120,235,1280,245,1360,250.7L1440,256L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z">
+      </path>
+    </svg>
+  </div>
+
+  <!-- Demo payment modal -->
+  <div class="modal" id="payModal" role="dialog" aria-modal="true" aria-label="Оплата">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Оплата билета</div>
+        <button class="xbtn" type="button" onclick="closePay()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="pay-row">
+          <span id="payRoute">—</span>
+          <span id="payAmount">—</span>
+        </div>
+
+        <!-- hidden storage for flight data -->
+        <input type="hidden" id="payAirline" value="">
+        <input type="hidden" id="payDepartAt" value="">
+        <input type="hidden" id="payArriveAt" value="">
+        <input type="hidden" id="payStops" value="0">
+
+        <div class="pay-grid">
+          <div>
+            <div class="pay-label">Номер карты</div>
+            <input class="pay-input" id="cardNumber" placeholder="0000 0000 0000 0000" inputmode="numeric">
+          </div>
+          <div>
+            <div class="pay-label">Имя пассажира</div>
+            <input class="pay-input" id="passengerName" placeholder="IVAN IVANOV">
+          </div>
+          <div>
+            <div class="pay-label">Email</div>
+            <input class="pay-input" id="passengerEmail" placeholder="demo@mail.com">
+          </div>
+          <div>
+            <div class="pay-label">Срок (MM/YY)</div>
+            <input class="pay-input" id="exp" placeholder="12/29" inputmode="numeric">
+          </div>
+          <div>
+            <div class="pay-label">CVC</div>
+            <input class="pay-input" id="cvc" placeholder="123" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="notice">
+          Оплата принята!!!
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn" type="button" onclick="closePay()">Отмена</button>
+        <button class="btn btn-yellow" type="button" onclick="fakePaid()">Оплатить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tabs: one-way / round-trip
+    const tabOW = document.getElementById('tab-ow');
+    const tabRT = document.getElementById('tab-rt');
+    const returnWrap = document.getElementById('returnWrap');
+
+    function setMode(mode){
+      if(mode === 'rt'){
+        tabRT.classList.add('active');
+        tabOW.classList.remove('active');
+        returnWrap.classList.add('show');
+      }else{
+        tabOW.classList.add('active');
+        tabRT.classList.remove('active');
+        returnWrap.classList.remove('show');
+        const retInput = returnWrap.querySelector('input');
+        if(retInput) retInput.value = '';
+      }
+    }
+    tabOW?.addEventListener('click', ()=>setMode('ow'));
+    tabRT?.addEventListener('click', ()=>setMode('rt'));
+
+    // Demo payment modal
+    const modal = document.getElementById('payModal');
+    const payRoute = document.getElementById('payRoute');
+    const payAmount = document.getElementById('payAmount');
+
+    function openPay(origin, dest, price, cur, airline, departAt, arriveAt, stops){
+      payRoute.textContent = `${origin} → ${dest}`;
+      payAmount.textContent = `${price} ${cur}`;
+      document.getElementById('payAirline').value = airline || "";
+      document.getElementById('payDepartAt').value = departAt || "";
+      document.getElementById('payArriveAt').value = arriveAt || "";
+      document.getElementById('payStops').value = stops || "0";
+      modal.classList.add('open');
+    }
+
+    function closePay(){
+      modal.classList.remove('open');
+    }
+
+    function fakePaid(){
+      // passenger data
+      const name = (document.getElementById('passengerName')?.value || "IVAN IVANOV").trim();
+      const email = (document.getElementById('passengerEmail')?.value || "demo@mail.com").trim();
+
+      // route and amount
+      const route = (payRoute?.textContent || "SVO → IST");
+      const amount = (payAmount?.textContent || "18990 RUB");
+
+      const parts = route.split("→").map(s => s.trim());
+      const origin = parts[0] || "SVO";
+      const destination = parts[1] || "IST";
+
+      const amtParts = amount.split(" ");
+      const price = amtParts[0] || "18990";
+      const currency = amtParts[1] || "RUB";
+
+      // flight details
+      const airline = document.getElementById('payAirline').value || "SU";
+      const depart_at = document.getElementById('payDepartAt').value || "2026-03-03T08:40";
+      const arrive_at = document.getElementById('payArriveAt').value || "2026-03-03T12:15";
+      const stops = document.getElementById('payStops').value || "0";
+
+      // cabin from form
+      const cabin = document.querySelector('select[name="cabin"]')?.value || "ECONOMY";
+
+      // redirect to ticket page
+      const url = new URL(window.location.origin + "/flights/ticket/");
+      url.searchParams.set("name", name);
+      url.searchParams.set("email", email);
+      url.searchParams.set("origin", origin);
+      url.searchParams.set("destination", destination);
+      url.searchParams.set("price", price);
+      url.searchParams.set("currency", currency);
+      url.searchParams.set("cabin", cabin);
+      url.searchParams.set("airline", airline);
+      url.searchParams.set("depart_at", depart_at);
+      url.searchParams.set("arrive_at", arrive_at);
+      url.searchParams.set("stops", stops);
+
+      window.location.href = url.toString();
+    }
+
+    modal?.addEventListener('click', (e) => {
+      if(e.target === modal) closePay();
+    });
+
+    // UX: uppercase IATA on typing
+    const originInput = document.querySelector('input[name="origin"]');
+    const destInput = document.querySelector('input[name="destination"]');
+    [originInput, destInput].forEach(el => {
+      if(!el) return;
+      el.addEventListener('input', () => {
+        el.value = el.value.toUpperCase().slice(0,3);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервисы поездки</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: rgba(255, 255, 255, 0.88);
+            --text: #10203a;
+            --muted: #6f7d95;
+            --border: rgba(15, 23, 42, 0.08);
+            --primary: #3b5bfd;
+            --primary-dark: #2747e6;
+            --shadow: 0 12px 40px rgba(31, 41, 55, 0.12);
+            --radius: 22px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, #dfe9ff 0%, transparent 28%),
+                radial-gradient(circle at bottom right, #d8f3ff 0%, transparent 22%),
+                var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            width: min(1220px, calc(100% - 32px));
+            margin: 32px auto 48px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            padding: 28px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #2248e5 0%, #4c7bff 100%);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .hero-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 38px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 17px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 16px;
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            transition: .2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,.14);
+            color: white;
+            border: 1px solid rgba(255,255,255,.2);
+        }
+
+        .toolbar {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr auto;
+            gap: 14px;
+        }
+
+        .input,
+        .select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.85);
+            border-radius: 18px;
+            padding: 15px 16px;
+            font-size: 15px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .stats {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card,
+        .panel,
+        .booking-card {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,.65);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card {
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .stat-sub {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .content-grid {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .panel {
+            border-radius: 28px;
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .panel-subtitle {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .badge-soft {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #eef3ff;
+            color: #3354f4;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .bookings-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .booking-card {
+            border-radius: 24px;
+            padding: 20px;
+            transition: .2s ease;
+        }
+
+        .booking-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .booking-title {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .booking-meta {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .chip-type { background: #eef3ff; color: #3354f4; }
+        .chip-confirmed { background: #eafaf2; color: #15985a; }
+        .chip-paid { background: #e7faf1; color: #0e9f5a; }
+        .chip-pending { background: #fff6df; color: #b7791f; }
+        .chip-draft { background: #eef2f7; color: #617086; }
+        .chip-cancelled { background: #ffe9e9; color: #d63d3d; }
+        .chip-completed { background: #edf7ff; color: #2273c8; }
+        .chip-partially_paid { background: #fff3e8; color: #d97706; }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .info-box {
+            background: rgba(244, 247, 252, 0.95);
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            border-radius: 18px;
+            padding: 14px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .booking-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .price-wrap {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .price-main {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .price-muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 56px 24px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(245,248,255,.9) 0%, rgba(255,255,255,.95) 100%);
+            border: 1px dashed rgba(59, 91, 253, 0.22);
+        }
+
+        .loading,
+        .error-box {
+            padding: 18px 20px;
+            border-radius: 18px;
+            font-weight: 600;
+        }
+
+        .loading { background: #eef4ff; color: #2d4fd7; }
+        .error-box { background: #fff0f0; color: #cf3333; }
+
+        @media (max-width: 1100px) {
+            .stats { grid-template-columns: repeat(3, 1fr); }
+            .booking-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 820px) {
+            .hero { flex-direction: column; align-items: flex-start; }
+            .toolbar { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 560px) {
+            .container {
+                width: min(100% - 18px, 100%);
+                margin: 18px auto 28px;
+            }
+            .hero, .panel { padding: 18px; }
+            .hero h1 { font-size: 30px; }
+            .stats { grid-template-columns: 1fr; }
+            .booking-grid { grid-template-columns: 1fr; }
+            .booking-title { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <section class="hero">
+        <div class="hero-left">
+            <div class="hero-icon">🧳</div>
+            <div>
+                <h1>Сервисы поездки</h1>
+                <p>Жильё, трансфер, аренда авто, экскурсии, страховка и активности — всё в одном месте.</p>
+            </div>
+        </div>
+
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="openCreateModal()">+ Добавить сервис</button>
+            <a href="/trips/" class="btn btn-secondary">К поездкам</a>
+        </div>
+    </section>
+
+    <section class="toolbar">
+        <input id="searchInput" class="input" type="text" placeholder="Поиск по названию, поставщику, городу..." />
+        <select id="typeFilter" class="select">
+            <option value="">Все типы</option>
+            <option value="accommodation">Жильё</option>
+            <option value="transfer">Трансфер</option>
+            <option value="car_rental">Аренда авто</option>
+            <option value="excursion">Экскурсия</option>
+            <option value="insurance">Страховка</option>
+            <option value="activity">Активность</option>
+        </select>
+        <button class="btn btn-primary" onclick="loadBookings()">Применить</button>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Всего сервисов</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-sub">всего записей</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Подтверждено</div>
+            <div class="stat-value" id="stat-confirmed">0</div>
+            <div class="stat-sub">готово к поездке</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Оплачено</div>
+            <div class="stat-value" id="stat-paid">0</div>
+            <div class="stat-sub">полностью закрыто</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Ближайшие</div>
+            <div class="stat-value" id="stat-upcoming">0</div>
+            <div class="stat-sub">предстоящие записи</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Общая сумма</div>
+            <div class="stat-value" id="stat-total-amount">0</div>
+            <div class="stat-sub">стоимость сервисов</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Осталось оплатить</div>
+            <div class="stat-value" id="stat-remaining">0</div>
+            <div class="stat-sub">непогашенный остаток</div>
+        </div>
+    </section>
+
+    <section class="content-grid">
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Список бронирований</h2>
+                    <p class="panel-subtitle">Современный обзор всех сервисов, связанных с поездками.</p>
+                </div>
+                <div class="badge-soft" id="resultsCounter">Показано: 0</div>
+            </div>
+
+            <div id="loadingBox" class="loading" style="display:none;">Загрузка данных...</div>
+            <div id="errorBox" class="error-box" style="display:none;"></div>
+
+            <div id="bookingsList" class="bookings-list"></div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function formatMoney(value, currency = "KGS") {
+        const num = Number(value || 0);
+        return `${num.toLocaleString("ru-RU")} ${currency}`;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "—";
+        const date = new Date(dateString);
+        if (isNaN(date)) return "—";
+        return date.toLocaleString("ru-RU", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    function getStatusClass(status) {
+        return `chip-${status || "draft"}`;
+    }
+
+    function getTypeLabel(type) {
+        const map = {
+            accommodation: "Жильё",
+            transfer: "Трансфер",
+            car_rental: "Аренда авто",
+            excursion: "Экскурсия",
+            insurance: "Страховка",
+            activity: "Активность"
+        };
+        return map[type] || type || "Сервис";
+    }
+
+    function safeText(value) {
+        return value ? value : "—";
+    }
+
+    function openCreateModal() {
+        alert("Следующим шагом можно подключить форму создания бронирования.");
+    }
+
+    async function loadSummary() {
+        try {
+            const response = await fetch("/api/bookings/summary/");
+            if (!response.ok) throw new Error("Не удалось загрузить summary");
+
+            const data = await response.json();
+
+            document.getElementById("stat-total").textContent = data.total || 0;
+            document.getElementById("stat-confirmed").textContent = data.confirmed || 0;
+            document.getElementById("stat-paid").textContent = data.paid || 0;
+            document.getElementById("stat-upcoming").textContent = data.upcoming || 0;
+            document.getElementById("stat-total-amount").textContent = Number(data.total_amount || 0).toLocaleString("ru-RU");
+            document.getElementById("stat-remaining").textContent = Number(data.remaining_amount || 0).toLocaleString("ru-RU");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function loadBookings() {
+        const loadingBox = document.getElementById("loadingBox");
+        const errorBox = document.getElementById("errorBox");
+        const bookingsList = document.getElementById("bookingsList");
+        const resultsCounter = document.getElementById("resultsCounter");
+
+        loadingBox.style.display = "block";
+        errorBox.style.display = "none";
+        bookingsList.innerHTML = "";
+
+        try {
+            const params = new URLSearchParams();
+            const search = document.getElementById("searchInput").value.trim();
+            const type = document.getElementById("typeFilter").value;
+
+            if (search) params.append("search", search);
+            if (type) params.append("type", type);
+
+            const url = `/api/bookings/${params.toString() ? "?" + params.toString() : ""}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Не удалось загрузить бронирования");
+            }
+
+            const data = await response.json();
+            const results = data.results || [];
+            resultsCounter.textContent = `Показано: ${results.length}`;
+
+            if (!results.length) {
+                bookingsList.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size:54px; margin-bottom:16px;">🗂️</div>
+                        <h3>Пока нет сервисов поездки</h3>
+                        <p>Добавь жильё, трансфер, аренду авто, экскурсию, страховку или активность.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            bookingsList.innerHTML = results.map(item => `
+                <article class="booking-card">
+                    <div class="booking-top">
+                        <div>
+                            <h3 class="booking-title">${safeText(item.title)}</h3>
+                            <div class="booking-meta">
+                                <span>Поставщик: ${safeText(item.provider)}</span>
+                                <span>•</span>
+                                <span>Поездка: ${safeText(item.trip_title)}</span>
+                                <span>•</span>
+                                <span>Код: ${safeText(item.booking_reference)}</span>
+                            </div>
+                        </div>
+
+                        <div class="chips">
+                            <span class="chip chip-type">${safeText(item.type_display || getTypeLabel(item.type))}</span>
+                            <span class="chip ${getStatusClass(item.status)}">${safeText(item.status_display || item.status)}</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-grid">
+                        <div class="info-box">
+                            <div class="info-label">Начало</div>
+                            <div class="info-value">${formatDate(item.start_date)}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-label">Окончание</div>
+                            <div class="info-value">${formatDate(item.end_date)}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-label">Локация</div>
+                            <div class="info-value">${[item.country, item.city, item.address].filter(Boolean).join(", ") || "—"}</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-label">Путешественники</div>
+                            <div class="info-value">${item.travelers_count ?? "—"}</div>
+                        </div>
+                    </div>
+
+                    <div class="booking-footer">
+                        <div class="price-wrap">
+                            <div class="price-main">${formatMoney(item.price, item.currency)}</div>
+                            <div class="price-muted">Оплачено: ${formatMoney(item.paid_amount, item.currency)}</div>
+                            <div class="price-muted">Осталось: ${formatMoney(item.remaining_amount, item.currency)}</div>
+                        </div>
+                        <div class="price-muted">${safeText(item.notes)}</div>
+                    </div>
+                </article>
+            `).join("");
+        } catch (error) {
+            errorBox.style.display = "block";
+            errorBox.textContent = error.message || "Ошибка загрузки";
+        } finally {
+            loadingBox.style.display = "none";
+        }
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") loadBookings();
+    });
+
+    document.getElementById("typeFilter").addEventListener("change", loadBookings);
+
+    loadSummary();
+    loadBookings();
+</script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отзывы о турах</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Inter, Arial, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    min-height:100vh;
+    color:#1e293b;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.header h1{
+    font-size:40px;
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.header p{
+    color:#64748b;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:400px 1fr;
+    gap:24px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:28px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.card h2{
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+    font-size:14px;
+}
+
+select,input,textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #e2e8f0;
+    font-size:14px;
+    background:#fafafa;
+}
+
+select:focus,input:focus,textarea:focus{
+    outline:none;
+    border-color:#2563eb;
+    background:white;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+input[type="file"]{
+    background:white;
+    padding:10px;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+    font-size:15px;
+    transition:0.2s;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+
+.reviews{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.review{
+    border:1px solid #e2e8f0;
+    padding:16px;
+    border-radius:12px;
+    background:#fafafa;
+}
+
+.review-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    gap:12px;
+}
+
+.rating{
+    background:#fde68a;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.user{
+    font-size:13px;
+    color:#64748b;
+}
+
+.comment{
+    margin-top:8px;
+    line-height:1.5;
+}
+
+.date{
+    font-size:12px;
+    color:#94a3b8;
+    margin-top:10px;
+}
+
+.review-photo{
+    margin-top:12px;
+}
+
+.review-photo img{
+    width:100%;
+    max-width:320px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    display:block;
+}
+
+.preview{
+    margin-top:10px;
+}
+
+.preview img{
+    max-width:100%;
+    max-height:220px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+}
+
+.message{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    display:none;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+@media(max-width:900px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Отзывы о турах</h1>
+        <p>Оставляйте впечатления о поездках и добавляйте фотографии</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Новый отзыв</h2>
+
+            <form id="reviewForm" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="tour">Тур</label>
+                    <select id="tour" required>
+                        <option value="">Выберите тур</option>
+                        {% for tour in tours %}
+                            <option value="{{ tour.id }}">{{ tour.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Рейтинг</label>
+                    <input type="number" id="rating" min="1" max="5" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Комментарий</label>
+                    <textarea id="comment"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="photo">Фото</label>
+                    <input type="file" id="photo" accept="image/*">
+                    <div class="preview" id="preview"></div>
+                </div>
+
+                <button class="btn" type="submit">Отправить отзыв</button>
+            </form>
+
+            <div id="msg" class="message"></div>
+        </div>
+
+        <div class="card">
+            <h2>Все отзывы</h2>
+
+            <div class="reviews">
+                {% for review in reviews %}
+                    <div class="review">
+                        <div class="review-top">
+                            <div>
+                                <strong>{{ review.tour.title }}</strong>
+                                <div class="user">{{ review.user.username }}</div>
+                            </div>
+
+                            <div class="rating">⭐ {{ review.rating }}</div>
+                        </div>
+
+                        <div class="comment">
+                            {% if review.comment %}
+                                {{ review.comment }}
+                            {% else %}
+                                Без комментария
+                            {% endif %}
+                        </div>
+
+                        {% if review.photo %}
+                            <div class="review-photo">
+                                <img src="{{ review.photo.url }}" alt="Фото отзыва">
+                            </div>
+                        {% endif %}
+
+                        <div class="date">
+                            {{ review.created_at|date:"d.m.Y H:i" }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Отзывов пока нет</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const form = document.getElementById("reviewForm");
+const msg = document.getElementById("msg");
+const photoInput = document.getElementById("photo");
+const preview = document.getElementById("preview");
+
+function getCookie(name){
+    let cookieValue = null;
+
+    if(document.cookie && document.cookie !== ""){
+        const cookies = document.cookie.split(";");
+
+        for(let i = 0; i < cookies.length; i++){
+            const cookie = cookies[i].trim();
+
+            if(cookie.substring(0, name.length + 1) === (name + "=")){
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+photoInput.addEventListener("change", function(){
+    preview.innerHTML = "";
+
+    const file = this.files[0];
+    if (!file) return;
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.alt = "Предпросмотр";
+
+    preview.appendChild(img);
+});
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("tour", document.getElementById("tour").value);
+    formData.append("rating", document.getElementById("rating").value);
+    formData.append("comment", document.getElementById("comment").value);
+
+    const photoFile = photoInput.files[0];
+    if (photoFile) {
+        formData.append("photo", photoFile);
+    }
+
+    try {
+        const response = await fetch("/api/reviews/data/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+            msg.className = "message success";
+            msg.innerText = "Отзыв с фото добавлен";
+            setTimeout(() => {
+                location.reload();
+            }, 800);
+        } else {
+            let errorText = "Ошибка отправки";
+
+            if (data.non_field_errors) {
+                errorText = data.non_field_errors.join(" ");
+            } else if (data.detail) {
+                errorText = data.detail;
+            } else {
+                const firstKey = Object.keys(data)[0];
+                if (firstKey) {
+                    errorText = Array.isArray(data[firstKey]) ? data[firstKey][0] : data[firstKey];
+                }
+            }
+
+            msg.className = "message error";
+            msg.innerText = errorText;
+        }
+
+    } catch {
+        msg.className = "message error";
+        msg.innerText = "Ошибка сервера";
+    }
+});
+</script>
+
+</body>
+</html>

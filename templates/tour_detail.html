@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ tour.title }}</title>
+
+<style>
+
+:root{
+--bg:#f6f7f9;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:#e5e7eb;
+--shadow:0 14px 40px rgba(15,23,42,.08);
+--radius:18px;
+--primary:#0f172a;
+--accent:#f6a735;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+background:var(--bg);
+color:var(--text);
+}
+
+.wrap{
+max-width:1100px;
+margin:0 auto;
+padding:24px 18px 60px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.back{
+text-decoration:none;
+color:var(--text);
+font-weight:900;
+border:1px solid var(--line);
+background:#fff;
+padding:10px 14px;
+border-radius:12px;
+}
+
+.hero{
+background:#fff;
+border:1px solid var(--line);
+border-radius:22px;
+overflow:hidden;
+box-shadow:var(--shadow);
+margin-bottom:18px;
+}
+
+.hero img{
+width:100%;
+height:360px;
+object-fit:cover;
+display:block;
+}
+
+.hero-body{
+padding:20px;
+}
+
+h1{
+margin:0 0 10px;
+font-size:34px;
+font-weight:1000;
+line-height:1.1;
+}
+
+.chips{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin:14px 0;
+}
+
+.chip{
+background:#f8fafc;
+border:1px solid var(--line);
+border-radius:999px;
+padding:7px 10px;
+font-size:13px;
+font-weight:900;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1.1fr .9fr;
+gap:16px;
+}
+
+@media(max-width:900px){
+.grid{grid-template-columns:1fr;}
+}
+
+.card{
+background:#fff;
+border:1px solid var(--line);
+border-radius:20px;
+box-shadow:var(--shadow);
+padding:18px;
+margin-bottom:16px;
+}
+
+.card h2{
+margin:0 0 14px;
+font-size:22px;
+}
+
+.muted{
+color:var(--muted);
+line-height:1.6;
+}
+
+.day{
+border:1px solid var(--line);
+border-radius:16px;
+padding:14px;
+margin-bottom:12px;
+background:#fafafa;
+}
+
+.day strong{
+display:block;
+margin-bottom:8px;
+font-size:16px;
+}
+
+.price{
+font-size:28px;
+font-weight:1000;
+margin:10px 0 16px;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+border:none;
+border-radius:14px;
+padding:12px 16px;
+font-weight:1000;
+cursor:pointer;
+}
+
+.btn-primary{
+background:var(--accent);
+color:#fff;
+box-shadow:0 12px 30px rgba(246,167,53,.35);
+}
+
+select{
+width:100%;
+padding:12px 14px;
+border:1px solid var(--line);
+border-radius:12px;
+background:#fff;
+font-size:15px;
+margin:12px 0 16px;
+}
+
+.services{
+margin-top:50px;
+}
+
+.services h1{
+font-size:32px;
+margin-bottom:20px;
+}
+
+.services h3{
+margin-top:25px;
+font-size:20px;
+}
+
+.services p{
+color:var(--muted);
+line-height:1.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<a class="back" href="/tours/country/{{ tour.country.id }}/tours/">← Назад к турам</a>
+</div>
+
+<div class="hero">
+<img src="{{ tour.image }}" alt="{{ tour.title }}">
+<div class="hero-body">
+
+<h1>{{ tour.title }}</h1>
+
+<div class="muted">{{ tour.description }}</div>
+
+<div class="chips">
+<span class="chip">🌍 {{ tour.country.name }}</span>
+{% if tour.city %}<span class="chip">🏙 {{ tour.city.name }}</span>{% endif %}
+<span class="chip">✈️ Вылет: {{ tour.get_departure_city_display }}</span>
+<span class="chip">📅 Дата вылета: {{ tour.start_date }}</span>
+<span class="chip">⏳ {{ tour.duration_days }} дн.</span>
+</div>
+
+</div>
+</div>
+
+
+<div class="grid">
+
+<div>
+
+<div class="card">
+<h2>Подробно о туре</h2>
+
+<div class="muted">
+{% if tour.details %}
+{{ tour.details|linebreaks }}
+{% else %}
+Подробное описание пока не добавлено.
+{% endif %}
+</div>
+
+</div>
+
+
+<div class="card">
+<h2>Программа по дням</h2>
+
+{% if days %}
+
+{% for day in days %}
+
+<div class="day">
+<strong>День {{ day.day_number }}{% if day.title %}: {{ day.title }}{% endif %}</strong>
+<div class="muted">{{ day.description|linebreaks }}</div>
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="muted">
+Программа по дням пока не заполнена.
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<div>
+
+<div class="card">
+
+<h2>Выбор отеля</h2>
+
+<div class="muted">
+Отель по умолчанию:
+<strong>{% if tour.hotel_name %}{{ tour.hotel_name }}{% else %}не указан{% endif %}</strong>
+</div>
+
+{% if hotels %}
+
+<label style="display:block;margin-top:14px;font-weight:900;">
+Выберите отель
+</label>
+
+<select>
+{% for hotel in hotels %}
+<option>
+{{ hotel.name }}{% if hotel.price_extra %} (+{{ hotel.price_extra }} EUR){% endif %}
+</option>
+{% endfor %}
+</select>
+
+{% else %}
+
+<div class="muted" style="margin-top:12px;">
+Дополнительные отели пока не добавлены.
+</div>
+
+{% endif %}
+
+<div class="price">{{ tour.price }} EUR</div>
+
+<a class="btn btn-primary" href="/bookings/request/{{ tour.id }}/">
+Забронировать
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- УСЛУГИ -->
+
+<section class="services">
+
+<h1>Услуги</h1>
+
+<h3>Туристическая страховка</h3>
+<p>
+Страховка станет волшебной палочкой, которая избавит Вас от больших расходов на медицинские услуги, когда Вы будете за границей.
+Также отметим, что наличие страхового полюса необходимо для получения некоторых виз.
+Вы не успеете сказать слово «Рай» как наш менеджер оформит Вам страховой полюс!
+Быстро, качественно, доступно, в любую страну и на любой срок!
+</p>
+
+<h3>Бронирование отелей</h3>
+<p>
+Мы рады помочь вам в выборе отеля. Независимо от страны, от количества дней, от расположения —
+наши менеджеры всегда найдут наиболее подходящий для Вас вариант.
+От фешенебельных гостиниц до простых уютных маленьких отелей,
+от шумных городских отелей до вилл на Мальдивах. Путешествуйте!
+</p>
+
+<h3>Туры по всему миру</h3>
+<p>
+Легкий бриз, жаркое солнце, чистый пляж, ласковое море…
+Еще немного и ваши мечты сбудутся!
+</p>
+
+<h3>Оформление Визы</h3>
+<p>
+Визовая поддержка.
+Наши менеджеры помогут Вам в оформлении виз.
+Консультация, сбор необходимых документов, подготовка к собеседованию,
+запись в посольство, заполнение анкет.
+Мы рады предоставить Вам всю информацию касательно Вашего путешествия.
+</p>
+
+<h3>Авиабилеты на все направления</h3>
+<p>
+Компания Tur.kg может обеспечить бронирование и продажу авиабилетов
+в любую точку мира.
+</p>
+
+<h3>Железнодорожные билеты</h3>
+<p>
+В наше современное время не стоит забывать о важности поездов.
+Какие чудесные красоты открываются перед взором нашего туриста,
+когда он едет на поезде в пункт своего назначения.
+Современные, комфортабельные и быстрые поезда,
+с легкостью доставят Вас практически в любую точку планеты.
+</p>
+
+<h3>Корпоративный туризм</h3>
+<p>
+Если вы хотите улучшить отношения в коллективе и при этом отдохнуть,
+то корпоративная поездка — это отличное решение.
+</p>
+
+</section>
+
+</div>
+
+</body>
+</html>

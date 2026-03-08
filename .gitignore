@@ -1,0 +1,20 @@
+# Django & Python
+__pycache__/
+*.pyc
+*.pyo
+db.sqlite3
+venv/
+env/
+
+# Secrets
+.env
+.env.local
+secret_key.txt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

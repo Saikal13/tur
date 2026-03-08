@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{font-family:system-ui,Segoe UI,Arial; margin:0; background:#f6f7fb; color:#111827;}
+    .wrap{max-width:900px; margin:0 auto; padding:30px 18px;}
+    .card{background:#fff; border:1px solid rgba(15,23,42,.08); border-radius:14px; padding:16px; margin:12px 0;}
+    a{color:inherit; text-decoration:none}
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .btn{display:inline-block; padding:10px 14px; border-radius:12px; font-weight:800; background:#f6c400; color:#1b1400;}
+    .btn2{display:inline-block; padding:10px 14px; border-radius:12px; font-weight:800; background:#fff; border:1px solid rgba(15,23,42,.14);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="card">
+      <h3>Пользователи</h3>
+      <div class="row">
+        <a class="btn" href="/api/users/register/">Регистрация</a>
+        <a class="btn2" href="/api/users/login/">Вход</a>
+        <a class="btn2" href="/api/users/me/">Профиль</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Туры</h3>
+      <div class="row">
+        <a class="btn" href="/api/tours/">Открыть</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Бронирования</h3>
+      <div class="row">
+        <a class="btn" href="/api/bookings/">Открыть</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Отзывы</h3>
+      <div class="row">
+        <a class="btn" href="/api/reviews/">Открыть</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <a class="btn2" href="/">← На главную</a>
+    </div>
+  </div>
+</body>
+</html>
