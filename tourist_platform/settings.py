@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'core',
     "flights",
     'admin_panel',
+    'client_panel',
 ]
 
 MIDDLEWARE = [
