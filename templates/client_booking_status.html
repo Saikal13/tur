@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статус вашей заявки</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .status.new { background: #ffe5e5; color: #e74c3c; }
+        .status.in-progress { background: #fff3cd; color: #f39c12; }
+        .status.confirmed { background: #d4edda; color: #27ae60; }
+        .status.done { background: #d4edda; color: #27ae60; }
+        .status.cancelled { background: #f8d7da; color: #721c24; }
+
+        .info-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            text-align: right;
+        }
+
+        .comments-section {
+            margin-bottom: 20px;
+        }
+
+        .comments-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .comment {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .comment-text {
+            margin-top: 10px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .no-comments {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .history-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-action {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .history-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📋 Статус вашей заявки</h1>
+        <p>Номер заявки: #{{ booking.id }}</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span class="status-badge status {{ booking.status }}">
+            🔔 {{ booking.get_status_display }}
+        </span>
+    </div>
+
+    <!-- Информация о заявке -->
+    <div class="info-section">
+        <h2 style="margin-top: 0;">📍 Ваша заявка</h2>
+
+        <div class="info-row">
+            <span class="info-label">Имя:</span>
+            <span class="info-value">{{ booking.name }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Телефон:</span>
+            <span class="info-value">{{ booking.phone }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Email:</span>
+            <span class="info-value">{{ booking.email }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Тур:</span>
+            <span class="info-value">{{ booking.tour.title }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Цена:</span>
+            <span class="info-value">{{ booking.tour.price }} EUR</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Дата заявки:</span>
+            <span class="info-value">{{ booking.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+
+        {% if booking.comment %}
+        <div class="info-row">
+            <span class="info-label">Ваш комментарий:</span>
+            <span class="info-value">{{ booking.comment }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Комментарии от администратора -->
+    {% if comments %}
+    <div class="comments-section">
+        <h2>💬 Сообщения от нашей команды</h2>
+
+        {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-author">
+                👤 Наша команда
+                <span class="comment-time">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="comment-text">
+                {{ comment.comment }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="comments-section">
+        <h2>💬 Сообщения от нашей команды</h2>
+        <div class="no-comments">
+            Комментариев пока нет. Мы свяжемся с вами в ближайшее время!
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- История изменений -->
+    {% if logs %}
+    <div class="history-section">
+        <h2>📜 История обработки</h2>
+
+        {% for log in logs %}
+        <div class="history-item">
+            <span class="history-action">{{ log.get_action_display }}</span>
+            <br>
+            <span class="history-time">{{ log.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not is_public %}
+    <div class="back-link">
+        <a href="/">← На главную</a>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

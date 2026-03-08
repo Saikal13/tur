@@ -30,10 +30,12 @@ class AdminLog(models.Model):
 class AdminComment(models.Model):
     """
     Комментарии администратора к заявкам
+    Видны клиентам на странице сообщений
     """
     booking = models.ForeignKey(BookingRequest, on_delete=models.CASCADE, related_name='admin_comments')
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='admin_comments')
     comment = models.TextField()
+    is_read = models.BooleanField(default=False)  # ✅ ДОБАВЛЕНО - для отметки прочитанности
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from core.views import register_page, login_page, home, api_page
+from core.views import register_page, login_page, home, api_page, logout_page
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -34,6 +34,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("register/", register_page, name="register_page"),
     path("login/", login_page, name="login_page"),
+    path("logout/", logout_page, name="logout"),
 
     path("", home, name="home"),
     path("api-page/", api_page, name="api_page"),
@@ -73,6 +74,7 @@ urlpatterns = [
 
     path("api-auth/", include("rest_framework.urls")),
     path('admin-panel/', include('admin_panel.urls')),
+    path('client/', include('client_panel.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои сообщения</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .header-info {
+            text-align: right;
+        }
+
+        .unread-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .messages-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .no-messages {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-messages-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .message-group {
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .booking-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .booking-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.new { background: #ffe5e5; color: #e74c3c; }
+        .status.in-progress { background: #fff3cd; color: #f39c12; }
+        .status.confirmed { background: #d4edda; color: #27ae60; }
+        .status.done { background: #d4edda; color: #27ae60; }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comment.unread {
+            background: #f0f8ff;
+            border-left-color: #e74c3c;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .comment-text {
+            color: #333;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .unread-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .back-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .header-info {
+                text-align: center;
+            }
+
+            .booking-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .messages-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>💬 Мои сообщения</h1>
+            <p style="color: #666; margin-top: 5px;">Все уведомления от нашей команды</p>
+        </div>
+        <div class="header-info">
+            {% if unread_count > 0 %}
+            <div class="unread-badge">
+                🔔 {{ unread_count }} новых
+            </div>
+            {% else %}
+            <p style="color: #666;">✅ Нет новых сообщений</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="messages-container">
+        {% if comments %}
+            {% regroup comments by booking as comments_by_booking %}
+
+            {% for booking_group in comments_by_booking %}
+            <div class="message-group">
+                <div class="booking-header">
+                    <div>
+                        <div class="booking-title">
+                            📋 Заявка #{{ booking_group.grouper.id }}
+                        </div>
+                        <div class="booking-info">
+                            Тур: <strong>{{ booking_group.grouper.tour.title }}</strong>
+                        </div>
+                        <div class="booking-info">
+                            Дата: {{ booking_group.grouper.created_at|date:"d.m.Y H:i" }}
+                        </div>
+                    </div>
+                    <span class="status-badge status {{ booking_group.grouper.status }}">
+                        {{ booking_group.grouper.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="comments-list">
+                    {% for comment in booking_group.list %}
+                    <div class="comment {% if not comment.is_read %}unread{% endif %}">
+                        <div class="comment-header">
+                            <span class="comment-author">
+                                👤 Наша команда
+                                {% if not comment.is_read %}
+                                <span class="unread-indicator"></span>
+                                {% endif %}
+                            </span>
+                            <span class="comment-time">
+                                {{ comment.created_at|date:"d.m.Y H:i" }}
+                            </span>
+                        </div>
+                        <div class="comment-text">
+                            {{ comment.comment }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="no-messages">
+            <div class="no-messages-icon">📭</div>
+            <h2>Нет сообщений</h2>
+            <p>Мы свяжемся с вами, как только будут новости по вашим заявкам</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not is_public %}
+    <div class="back-link">
+        <a href="/">← На главную</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Автоматически обновляем счетчик каждые 30 секунд
+{% if not is_public %}
+setInterval(function() {
+    fetch('/client/messages/count/')
+        .then(r => r.json())
+        .then(data => {
+            if (data.unread_count > 0) {
+                document.title = `(${data.unread_count}) Мои сообщения`;
+            }
+        });
+}, 30000);
+{% endif %}
+</script>
+
+</body>
+</html>

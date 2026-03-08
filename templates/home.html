@@ -561,12 +561,12 @@
         <div class="cta">
           {% if user.is_authenticated %}
             <span style="font-weight: 700; margin-right: 5px;">{{ user.username }}</span>
+            <a class="btn btn-ghost" href="/client/messages/" title="Мои сообщения">💬 СМС</a>
             <a class="btn btn-ghost" href="/logout/">Выйти</a>
           {% else %}
             <a class="btn btn-ghost" href="/register/">Регистрация</a>
             <a class="btn btn-ghost" href="/login/">Вход</a>
           {% endif %}
-          <a class="btn btn-yellow" href="#prices">Смотреть цены</a>
         </div>
       </div>
     </div>
@@ -685,7 +685,7 @@
           </div>
 
           <div style="margin-top:10px; font-size:12px; color:var(--muted); line-height:1.5;">
-            “Рейтинг” можно сделать отдельным endpoint (если нужно — добавим).
+            "Рейтинг" можно сделать отдельным endpoint (если нужно — добавим).
           </div>
         </div>
       </div>
@@ -695,7 +695,7 @@
   <section id="popular">
     <div class="container">
       <h2 class="title">Популярные туры</h2>
-      <p class="sub">Витрина из 3–6 туров. Сейчас берём последние из базы, потом можно сделать “по рейтингу/бронированиям”.</p>
+      <p class="sub">Витрина из 3–6 туров. Сейчас берём последние из базы, потом можно сделать "по рейтингу/бронированиям".</p>
 
       {% if popular_tours %}
       <div class="grid-3">
@@ -853,7 +853,7 @@
   <section id="itinerary">
     <div class="container">
       <h2 class="title">Маршрут</h2>
-      <p class="sub">Секция “Itinerary” как на примере: фото + описание дня.</p>
+      <p class="sub">Секция "Itinerary" как на примере: фото + описание дня.</p>
 
       <div class="it-row">
         <div class="it-img">
@@ -871,7 +871,7 @@
         <div class="it-body">
           <div class="day">День 2</div>
           <h3>Экскурсии и свободное время</h3>
-          <p>Днём — главные места, вечером — свободный маршрут. Можно связать с “программой тура” из модели Tour.</p>
+          <p>Днём — главные места, вечером — свободный маршрут. Можно связать с "программой тура" из модели Tour.</p>
           <a class="link" href="#contact">Узнать больше</a>
         </div>
         <div class="it-img">
@@ -886,7 +886,7 @@
         <div class="it-body">
           <div class="day">День 3</div>
           <h3>Переезд и новые локации</h3>
-          <p>Смена города/локации. Отлично подходит под “городские туры” и “побережье”.</p>
+          <p>Смена города/локации. Отлично подходит под "городские туры" и "побережье".</p>
           <a class="link" href="#contact">Узнать больше</a>
         </div>
       </div>

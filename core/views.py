@@ -1,15 +1,17 @@
 from datetime import date
 
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import redirect, render
 
 from trips.models import Trip
 from tours.models import Tour
+from django.contrib.auth.models import User
 
 
 def register_page(request):
+    """Страница регистрации"""
     if request.user.is_authenticated:
         return redirect("home")
 
@@ -26,23 +28,40 @@ def register_page(request):
 
 
 def login_page(request):
+    """Страница входа"""
     if request.user.is_authenticated:
         return redirect("home")
 
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect("home")
-    else:
-        form = AuthenticationForm()
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-    return render(request, "auth/login.html", {"form": form})
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            # ✅ Админы идут в админ-панель
+            if user.is_staff or user.is_superuser:
+                return redirect('/admin-panel/')
+
+            # Обычные пользователи на главную
+            return redirect('home')
+        else:
+            return render(request, 'auth/login.html', {'error': 'Неверный логин или пароль'})
+
+    return render(request, 'auth/login.html')
+
+
+def logout_page(request):
+    """Выход из аккаунта"""
+    logout(request)
+    return redirect('login_page')
 
 
 @login_required(login_url="/login/")
 def home(request):
+    """Главная страница"""
     # Популярные туры (последние 6)
     popular_tours = Tour.objects.all().order_by("-id")[:6]
 
@@ -68,4 +87,5 @@ def home(request):
 
 @login_required(login_url="/login/")
 def api_page(request):
+    """API страница"""
     return render(request, "api_page.html")
