@@ -8,7 +8,8 @@ urlpatterns = [
 
     # Сообщения (приватные)
     path('messages/', views.client_messages, name='client_messages'),
-    path('messages/ajax/', views.get_new_messages, name='get_new_messages'),  # ✅ AJAX endpoint
+    path('messages/ajax/', views.get_new_messages, name='get_new_messages'),
+    path('messages/send-response/', views.send_client_response, name='send_client_response'),  # ✅ НОВОЕ
     path('messages/mark-read/', views.mark_messages_as_read, name='mark_messages_as_read'),
 
     # Сообщения (публичные)

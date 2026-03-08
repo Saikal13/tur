@@ -35,10 +35,6 @@
             color: #333;
         }
 
-        .header-info {
-            text-align: right;
-        }
-
         .unread-badge {
             display: inline-block;
             background: #e74c3c;
@@ -49,33 +45,22 @@
             font-size: 14px;
         }
 
-        .status-badge {
-            display: inline-block;
-            background: #27ae60;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
         .messages-container {
             background: white;
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .no-messages {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .no-messages-icon {
-            font-size: 64px;
             margin-bottom: 20px;
+        }
+
+        .refresh-info {
+            background: #f0f8ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
         }
 
         .message-item {
@@ -119,12 +104,12 @@
             color: #333;
             line-height: 1.6;
             font-size: 14px;
+            margin-bottom: 10px;
         }
 
         .message-booking {
             font-size: 12px;
             color: #666;
-            margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid rgba(0,0,0,0.1);
         }
@@ -138,21 +123,124 @@
             margin-left: 10px;
         }
 
-        .loading {
+        .no-messages {
             text-align: center;
-            padding: 20px;
+            padding: 60px 20px;
             color: #999;
-            font-size: 12px;
         }
 
-        .refresh-info {
-            background: #f0f8ff;
+        .no-messages-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* ФОРМА ОТВЕТА */
+        .response-form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .response-form-container h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-submit:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .form-message {
             padding: 12px;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-top: 10px;
             text-align: center;
-            font-size: 12px;
-            color: #666;
+            font-size: 14px;
+            display: none;
+        }
+
+        .form-message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .form-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
         }
 
         .back-link {
@@ -181,14 +269,8 @@
                 gap: 15px;
             }
 
-            .header-info {
-                text-align: center;
-            }
-
-            .message-header {
+            .form-actions {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
             }
         }
     </style>
@@ -201,17 +283,48 @@
             <h1>💬 Мои сообщения</h1>
             <p style="color: #666; margin-top: 5px;">Все уведомления от нашей команды</p>
         </div>
-        <div class="header-info">
+        <div>
             {% if unread_count > 0 %}
             <div class="unread-badge">
                 🔔 <span id="unread-count">{{ unread_count }}</span> новых
             </div>
-            {% else %}
-            <div class="status-badge">✅ Все прочитаны</div>
             {% endif %}
         </div>
     </div>
 
+    <!-- ФОРМА ОТВЕТА КЛИЕНТА -->
+    <div class="response-form-container">
+        <h2>📝 Отправить ответ</h2>
+        <form id="response-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="booking_id">Выбери заявку:</label>
+                <select id="booking_id" name="booking_id" required>
+                    <option value="">-- Выберите заявку --</option>
+                    {% for booking in bookings %}
+                    <option value="{{ booking.id }}">
+                        #{{ booking.id }} - {{ booking.name }} ({{ booking.tour.title }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Твой ответ:</label>
+                <textarea id="message" name="message" placeholder="Напиши здесь свой ответ..." required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit">✈️ Отправить</button>
+                <button type="reset" class="btn btn-reset">🗑️ Очистить</button>
+            </div>
+
+            <div id="form-message" class="form-message"></div>
+        </form>
+    </div>
+
+    <!-- СООБЩЕНИЯ -->
     <div class="messages-container">
         <div class="refresh-info">
             ⚡ Сообщения обновляются автоматически каждые 3 секунды
@@ -246,10 +359,6 @@
             </div>
             {% endif %}
         </div>
-
-        <div class="loading" id="loading" style="display: none;">
-            ⏳ Загрузка новых сообщений...
-        </div>
     </div>
 
     <div class="back-link">
@@ -258,16 +367,9 @@
 </div>
 
 <script>
-// Переменная для отслеживания последнего сообщения
+// ===== ОБНОВЛЕНИЕ СООБЩЕНИЙ =====
 let lastTimestamp = null;
 
-// Получаем время первого сообщения
-const firstMessage = document.querySelector('[data-id]');
-if (firstMessage) {
-    lastTimestamp = new Date().toISOString();
-}
-
-// Функция для получения новых сообщений
 function checkForNewMessages() {
     const url = '/client/messages/ajax/' + (lastTimestamp ? '?last_timestamp=' + lastTimestamp : '');
 
@@ -275,10 +377,8 @@ function checkForNewMessages() {
         .then(response => response.json())
         .then(data => {
             if (data.success && data.messages.length > 0) {
-                // Добавляем новые сообщения в начало списка
                 const messagesList = document.getElementById('messages-list');
 
-                // Очищаем "Нет сообщений" если была
                 if (messagesList.querySelector('.no-messages')) {
                     messagesList.innerHTML = '';
                 }
@@ -304,28 +404,15 @@ function checkForNewMessages() {
                     messagesList.insertAdjacentHTML('afterbegin', html);
                 });
 
-                // Обновляем счетчик непрочитанных
                 document.getElementById('unread-count').textContent = data.unread_count;
-
-                // Воспроизводим звук уведомления
                 playNotificationSound();
-
-                // Обновляем timestamp
                 lastTimestamp = new Date().toISOString();
             }
-
-            // Скрываем индикатор загрузки
-            document.getElementById('loading').style.display = 'none';
         })
-        .catch(err => {
-            console.error('Ошибка при получении сообщений:', err);
-            document.getElementById('loading').style.display = 'none';
-        });
+        .catch(err => console.error('Ошибка:', err));
 }
 
-// Функция для воспроизведения звука
 function playNotificationSound() {
-    // Используем Web Audio API для создания звука
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
@@ -342,16 +429,68 @@ function playNotificationSound() {
 
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (e) {
-        // Браузер не поддерживает Web Audio API - ничего страшного
-    }
+    } catch (e) {}
 }
 
-// Проверяем новые сообщения каждые 3 секунды
 setInterval(checkForNewMessages, 3000);
-
-// Первую проверку делаем сразу
 checkForNewMessages();
+
+// ===== ОТПРАВКА ОТВЕТА КЛИЕНТА =====
+document.getElementById('response-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const bookingId = document.getElementById('booking_id').value;
+    const message = document.getElementById('message').value;
+    const formMessage = document.getElementById('form-message');
+    const submitBtn = this.querySelector('button[type="submit"]');
+
+    if (!bookingId || !message) {
+        showFormMessage('Заполни все поля!', 'error');
+        return;
+    }
+
+    // Отключаем кнопку
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Отправляю...';
+
+    // Отправляем AJAX запрос
+    const formData = new FormData();
+    formData.append('booking_id', bookingId);
+    formData.append('message', message);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
+
+    fetch('/client/messages/send-response/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showFormMessage('✅ ' + data.message, 'success');
+            document.getElementById('response-form').reset();
+
+            // Очищаем сообщение через 3 секунды
+            setTimeout(() => {
+                formMessage.style.display = 'none';
+            }, 3000);
+        } else {
+            showFormMessage('❌ ' + (data.error || 'Ошибка при отправке'), 'error');
+        }
+    })
+    .catch(err => {
+        showFormMessage('❌ Ошибка: ' + err.message, 'error');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✈️ Отправить';
+    });
+});
+
+function showFormMessage(message, type) {
+    const formMessage = document.getElementById('form-message');
+    formMessage.textContent = message;
+    formMessage.className = 'form-message ' + type;
+}
 </script>
 
 </body>

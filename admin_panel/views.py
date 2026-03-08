@@ -32,8 +32,15 @@ def dashboard(request):
     total_users = User.objects.count()
     total_tours = Tour.objects.count()
 
+    # ✅ ПОДСЧИТЫВАЕМ ОТВЕТЫ КЛИЕНТОВ
+    try:
+        from client_panel.models import ClientResponse
+        unread_responses_count = ClientResponse.objects.count()
+    except ImportError:
+        unread_responses_count = 0
+
     # Последние заявки
-    recent_bookings = BookingRequest.objects.all()[:10]
+    recent_bookings = BookingRequest.objects.all().order_by('-created_at')[:10]
 
     context = {
         'total_bookings': total_bookings,
@@ -44,6 +51,7 @@ def dashboard(request):
         'total_users': total_users,
         'total_tours': total_tours,
         'recent_bookings': recent_bookings,
+        'unread_responses_count': unread_responses_count,  # ✅ ДОБАВЛЯЕМ
     }
 
     return render(request, 'admin_dashboard.html', context)
@@ -96,6 +104,13 @@ def booking_detail(request, pk):
     comments = booking.admin_comments.all()
     logs = booking.admin_logs.all()
 
+    # ✅ ИМПОРТИРУЕМ И ПОЛУЧАЕМ ОТВЕТЫ КЛИЕНТА
+    try:
+        from client_panel.models import ClientResponse
+        client_responses = ClientResponse.objects.filter(booking=booking).order_by('-created_at')
+    except ImportError:
+        client_responses = []
+
     if request.method == 'POST':
         # Изменение статуса
         new_status = request.POST.get('status')
@@ -140,6 +155,7 @@ def booking_detail(request, pk):
         'booking': booking,
         'comments': comments,
         'logs': logs,
+        'client_responses': client_responses,  # ✅ ДОБАВЛЯЕМ В КОНТЕКСТ
         'status_choices': BookingRequest.STATUS_CHOICES,
     }
 
@@ -239,3 +255,32 @@ def stats(request):
     }
 
     return render(request, 'admin_stats.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def client_responses_list(request):
+    """Список всех ответов клиентов"""
+
+    try:
+        from client_panel.models import ClientResponse
+        responses = ClientResponse.objects.all().order_by('-created_at')
+    except ImportError:
+        responses = []
+
+    # Поиск
+    search = request.GET.get('search', '')
+    if search:
+        responses = responses.filter(
+            Q(booking__name__icontains=search) |
+            Q(booking__email__icontains=search) |
+            Q(message__icontains=search)
+        )
+
+    context = {
+        'responses': responses,
+        'search': search,
+        'total_count': len(responses),
+    }
+
+    return render(request, 'admin_client_responses.html', context)

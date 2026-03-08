@@ -1,8 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from bookings.models import BookingRequest
+
+# ✅ ИМПОРТИРУЕМ ИЗ admin_panel
 from admin_panel.models import AdminComment, AdminLog
+
+# ✅ ИМПОРТИРУЕМ ИЗ client_panel.models
+try:
+    from .models import ClientResponse
+except ImportError:
+    ClientResponse = None
 
 
 @login_required
@@ -118,6 +127,45 @@ def get_new_messages(request):
         'unread_count': unread_count,
         'success': True,
     })
+
+
+@login_required
+@require_http_methods(["POST"])
+def send_client_response(request):
+    """
+    AJAX endpoint для отправки ответа клиента
+    """
+    booking_id = request.POST.get('booking_id')
+    message = request.POST.get('message', '').strip()
+
+    if not booking_id or not message:
+        return JsonResponse({'success': False, 'error': 'Заполни все поля'})
+
+    try:
+        booking = BookingRequest.objects.get(id=booking_id)
+
+        # Создаём ответ клиента
+        if ClientResponse:
+            response = ClientResponse.objects.create(
+                booking=booking,
+                message=message
+            )
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Ответ отправлен! Администратор увидит его вскоре.',
+                'response_id': response.id
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Модель ClientResponse не найдена'
+            })
+
+    except BookingRequest.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Заявка не найдена'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 
 @login_required
