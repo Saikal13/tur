@@ -49,6 +49,17 @@
             font-size: 14px;
         }
 
+        .status-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
         .messages-container {
             background: white;
             border-radius: 12px;
@@ -67,87 +78,55 @@
             margin-bottom: 20px;
         }
 
-        .message-group {
-            margin-bottom: 30px;
-            border: 1px solid #eee;
-            border-radius: 8px;
+        .message-item {
             padding: 20px;
-            background: #f9f9f9;
-        }
-
-        .booking-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .booking-title {
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .booking-info {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status.new { background: #ffe5e5; color: #e74c3c; }
-        .status.in-progress { background: #fff3cd; color: #f39c12; }
-        .status.confirmed { background: #d4edda; color: #27ae60; }
-        .status.done { background: #d4edda; color: #27ae60; }
-
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .comment {
-            background: white;
-            padding: 15px;
+            background: #f0f8ff;
             border-radius: 8px;
             border-left: 4px solid #667eea;
+            animation: slideIn 0.3s ease-in-out;
         }
 
-        .comment.unread {
-            background: #f0f8ff;
-            border-left-color: #e74c3c;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .comment-header {
+        .message-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
 
-        .comment-author {
+        .message-author {
             font-weight: bold;
             color: #667eea;
         }
 
-        .comment-time {
+        .message-time {
             font-size: 12px;
             color: #999;
         }
 
-        .comment-text {
+        .message-text {
             color: #333;
             line-height: 1.6;
             font-size: 14px;
+        }
+
+        .message-booking {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0,0,0,0.1);
         }
 
         .unread-indicator {
@@ -157,6 +136,23 @@
             background: #e74c3c;
             border-radius: 50%;
             margin-left: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .refresh-info {
+            background: #f0f8ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
         }
 
         .back-link {
@@ -189,14 +185,10 @@
                 text-align: center;
             }
 
-            .booking-header {
+            .message-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
-            }
-
-            .messages-container {
-                padding: 20px;
+                gap: 5px;
             }
         }
     </style>
@@ -212,88 +204,154 @@
         <div class="header-info">
             {% if unread_count > 0 %}
             <div class="unread-badge">
-                🔔 {{ unread_count }} новых
+                🔔 <span id="unread-count">{{ unread_count }}</span> новых
             </div>
             {% else %}
-            <p style="color: #666;">✅ Нет новых сообщений</p>
+            <div class="status-badge">✅ Все прочитаны</div>
             {% endif %}
         </div>
     </div>
 
     <div class="messages-container">
-        {% if comments %}
-            {% regroup comments by booking as comments_by_booking %}
-
-            {% for booking_group in comments_by_booking %}
-            <div class="message-group">
-                <div class="booking-header">
-                    <div>
-                        <div class="booking-title">
-                            📋 Заявка #{{ booking_group.grouper.id }}
-                        </div>
-                        <div class="booking-info">
-                            Тур: <strong>{{ booking_group.grouper.tour.title }}</strong>
-                        </div>
-                        <div class="booking-info">
-                            Дата: {{ booking_group.grouper.created_at|date:"d.m.Y H:i" }}
-                        </div>
-                    </div>
-                    <span class="status-badge status {{ booking_group.grouper.status }}">
-                        {{ booking_group.grouper.get_status_display }}
-                    </span>
-                </div>
-
-                <div class="comments-list">
-                    {% for comment in booking_group.list %}
-                    <div class="comment {% if not comment.is_read %}unread{% endif %}">
-                        <div class="comment-header">
-                            <span class="comment-author">
-                                👤 Наша команда
-                                {% if not comment.is_read %}
-                                <span class="unread-indicator"></span>
-                                {% endif %}
-                            </span>
-                            <span class="comment-time">
-                                {{ comment.created_at|date:"d.m.Y H:i" }}
-                            </span>
-                        </div>
-                        <div class="comment-text">
-                            {{ comment.comment }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-        <div class="no-messages">
-            <div class="no-messages-icon">📭</div>
-            <h2>Нет сообщений</h2>
-            <p>Мы свяжемся с вами, как только будут новости по вашим заявкам</p>
+        <div class="refresh-info">
+            ⚡ Сообщения обновляются автоматически каждые 3 секунды
         </div>
-        {% endif %}
+
+        <div id="messages-list">
+            {% if comments %}
+                {% for comment in comments %}
+                <div class="message-item" data-id="{{ comment.id }}">
+                    <div class="message-header">
+                        <span class="message-author">
+                            👤 {{ comment.admin.username }}
+                            {% if not comment.is_read %}
+                            <span class="unread-indicator"></span>
+                            {% endif %}
+                        </span>
+                        <span class="message-time">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="message-text">
+                        {{ comment.comment }}
+                    </div>
+                    <div class="message-booking">
+                        📋 Заявка #{{ comment.booking.id }} - {{ comment.booking.name }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="no-messages">
+                <div class="no-messages-icon">📭</div>
+                <h2>Нет сообщений</h2>
+                <p>Мы свяжемся с вами, как только будут новости по вашим заявкам</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            ⏳ Загрузка новых сообщений...
+        </div>
     </div>
 
-    {% if not is_public %}
     <div class="back-link">
         <a href="/">← На главную</a>
     </div>
-    {% endif %}
 </div>
 
 <script>
-// Автоматически обновляем счетчик каждые 30 секунд
-{% if not is_public %}
-setInterval(function() {
-    fetch('/client/messages/count/')
-        .then(r => r.json())
+// Переменная для отслеживания последнего сообщения
+let lastTimestamp = null;
+
+// Получаем время первого сообщения
+const firstMessage = document.querySelector('[data-id]');
+if (firstMessage) {
+    lastTimestamp = new Date().toISOString();
+}
+
+// Функция для получения новых сообщений
+function checkForNewMessages() {
+    const url = '/client/messages/ajax/' + (lastTimestamp ? '?last_timestamp=' + lastTimestamp : '');
+
+    fetch(url)
+        .then(response => response.json())
         .then(data => {
-            if (data.unread_count > 0) {
-                document.title = `(${data.unread_count}) Мои сообщения`;
+            if (data.success && data.messages.length > 0) {
+                // Добавляем новые сообщения в начало списка
+                const messagesList = document.getElementById('messages-list');
+
+                // Очищаем "Нет сообщений" если была
+                if (messagesList.querySelector('.no-messages')) {
+                    messagesList.innerHTML = '';
+                }
+
+                data.messages.forEach(msg => {
+                    const html = `
+                        <div class="message-item" data-id="${msg.id}">
+                            <div class="message-header">
+                                <span class="message-author">
+                                    👤 ${msg.admin_name}
+                                    ${!msg.is_read ? '<span class="unread-indicator"></span>' : ''}
+                                </span>
+                                <span class="message-time">${new Date(msg.created_at).toLocaleString('ru-RU')}</span>
+                            </div>
+                            <div class="message-text">
+                                ${msg.comment}
+                            </div>
+                            <div class="message-booking">
+                                📋 Заявка #${msg.booking_id} - ${msg.booking_name}
+                            </div>
+                        </div>
+                    `;
+                    messagesList.insertAdjacentHTML('afterbegin', html);
+                });
+
+                // Обновляем счетчик непрочитанных
+                document.getElementById('unread-count').textContent = data.unread_count;
+
+                // Воспроизводим звук уведомления
+                playNotificationSound();
+
+                // Обновляем timestamp
+                lastTimestamp = new Date().toISOString();
             }
+
+            // Скрываем индикатор загрузки
+            document.getElementById('loading').style.display = 'none';
+        })
+        .catch(err => {
+            console.error('Ошибка при получении сообщений:', err);
+            document.getElementById('loading').style.display = 'none';
         });
-}, 30000);
-{% endif %}
+}
+
+// Функция для воспроизведения звука
+function playNotificationSound() {
+    // Используем Web Audio API для создания звука
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+        // Браузер не поддерживает Web Audio API - ничего страшного
+    }
+}
+
+// Проверяем новые сообщения каждые 3 секунды
+setInterval(checkForNewMessages, 3000);
+
+// Первую проверку делаем сразу
+checkForNewMessages();
 </script>
 
 </body>

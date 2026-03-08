@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from bookings.models import BookingRequest
 from admin_panel.models import AdminComment, AdminLog
@@ -11,8 +10,10 @@ def booking_status(request, booking_id):
     """
     Страница статуса заявки для клиента
     """
-    # Клиент видит только свою заявку по email
-    booking = get_object_or_404(BookingRequest, id=booking_id, email=request.GET.get('email', ''))
+    try:
+        booking = BookingRequest.objects.get(id=booking_id)
+    except BookingRequest.DoesNotExist:
+        return render(request, '404.html', status=404)
 
     comments = booking.admin_comments.all()
     logs = booking.admin_logs.all()
@@ -29,7 +30,6 @@ def booking_status(request, booking_id):
 def booking_status_public(request, booking_id, email):
     """
     Открытая страница статуса заявки (без логина)
-    Доступна по ссылке с email верификацией
     """
     try:
         booking = BookingRequest.objects.get(id=booking_id)
@@ -53,7 +53,6 @@ def booking_status_public(request, booking_id, email):
 def client_messages(request):
     """
     Страница всех сообщений клиента от администратора
-    Показывает ВСЕ комментарии (не фильтруем по email)
     """
     # Получаем ВСЕ заявки
     bookings = BookingRequest.objects.all().order_by('-created_at')
@@ -77,18 +76,48 @@ def client_messages(request):
 
 
 @login_required
-def client_messages_count(request):
+def get_new_messages(request):
     """
-    AJAX endpoint для получения количества новых сообщений
+    AJAX endpoint для получения новых комментариев
+    Возвращает JSON с новыми сообщениями
     """
-    user_email = request.user.email
-    bookings = BookingRequest.objects.filter(email=user_email).values_list('id', flat=True)
-    unread = AdminComment.objects.filter(
-        booking_id__in=bookings,
-        is_read=False
-    ).count()
+    # Получаем timestamp последнего загруженного сообщения (если есть)
+    last_timestamp = request.GET.get('last_timestamp', None)
 
-    return JsonResponse({'unread_count': unread})
+    # Получаем все комментарии
+    all_comments = AdminComment.objects.all().order_by('-created_at')
+
+    # Если есть timestamp - берём только новые
+    if last_timestamp:
+        from django.utils import timezone
+        from datetime import datetime
+        try:
+            last_dt = datetime.fromisoformat(last_timestamp)
+            all_comments = all_comments.filter(created_at__gt=last_dt)
+        except:
+            pass
+
+    # Формируем JSON ответ
+    messages = []
+    for comment in all_comments:
+        messages.append({
+            'id': comment.id,
+            'booking_id': comment.booking.id,
+            'booking_name': comment.booking.name,
+            'admin_name': comment.admin.username,
+            'comment': comment.comment,
+            'created_at': comment.created_at.isoformat(),
+            'is_read': comment.is_read,
+        })
+
+    # Подсчитываем непрочитанные
+    unread_count = AdminComment.objects.filter(is_read=False).count()
+
+    return JsonResponse({
+        'messages': messages,
+        'unread_count': unread_count,
+        'success': True,
+    })
 
 
 @login_required
@@ -97,14 +126,7 @@ def mark_messages_as_read(request):
     Отметить все сообщения как прочитанные
     """
     if request.method == 'POST':
-        user_email = request.user.email
-        bookings = BookingRequest.objects.filter(email=user_email).values_list('id', flat=True)
-
-        AdminComment.objects.filter(
-            booking_id__in=bookings,
-            is_read=False
-        ).update(is_read=True)
-
+        AdminComment.objects.filter(is_read=False).update(is_read=True)
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
